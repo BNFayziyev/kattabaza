@@ -87,6 +87,13 @@ export default function App() {
       openLink: "https://fast.com",
     },
     {
+      name: "Net_Monitor_",
+      version: "21",
+      type: "download",
+      openLink: "https://networklookout.com/",
+      downloadLink: "https://networklookout.com/dwn/nmemplpro.exe",
+    },
+    {
       name: "TeamViewer",
       version: "15",
       type: "download",
