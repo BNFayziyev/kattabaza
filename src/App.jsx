@@ -32,25 +32,7 @@ export default function App() {
   }[lang];
 
   const links = [
-    {
-      name: "Telegram Desktop",
-      version: "1.2.3",
-      type: "download",
-      openLink: "https://desktop.telegram.org/",
-      downloadLink: "https://telegram.org/dl/desktop/win64",
-    },
-    {
-      name: "Chrome",
-      version: "1.2.3",
-      type: "download",
-      openLink: "https://www.google.com/chrome/",
-    },
-    {
-      name: "Outline VPN",
-      version: "2.5.1",
-      type: "download",
-      openLink: "https://getoutline.org/",
-    },
+    
     {
       name: "v2rayN",
       version: "7.16.4",
@@ -60,12 +42,17 @@ export default function App() {
         "https://github.com/2dust/v2rayN/releases/download/7.16.4/v2rayN-windows-64-SelfContained.zip",
     },
     {
-      name: "Steam",
-      version: "3.1",
+      name: "Net_Monitor_",
+      version: "21",
       type: "download",
-      openLink: "https://store.steampowered.com/",
-      downloadLink:
-        "https://cdn.cloudflare.steamstatic.com/client/installer/SteamSetup.exe",
+      openLink: "https://networklookout.com/",
+      downloadLink: "https://networklookout.com/dwn/nmemplpro.exe",
+    },
+    {
+      name: "Outline VPN",
+      version: "2.5.1",
+      type: "download",
+      openLink: "https://getoutline.org/",
     },
     {
       name: "AnyDesk",
@@ -81,17 +68,31 @@ export default function App() {
       openLink: "https://www.speedtest.uz/",
     },
     {
+      name: "Steam",
+      version: "3.1",
+      type: "download",
+      openLink: "https://store.steampowered.com/",
+      downloadLink:
+        "https://cdn.cloudflare.steamstatic.com/client/installer/SteamSetup.exe",
+    },
+    {
       name: "Fast.com",
       version: "Web",
       type: "open",
       openLink: "https://fast.com",
     },
     {
-      name: "Net_Monitor_",
-      version: "21",
+      name: "Telegram Desktop",
+      version: "1.2.3",
       type: "download",
-      openLink: "https://networklookout.com/",
-      downloadLink: "https://networklookout.com/dwn/nmemplpro.exe",
+      openLink: "https://desktop.telegram.org/",
+      downloadLink: "https://telegram.org/dl/desktop/win64",
+    },
+    {
+      name: "Chrome",
+      version: "1.2.3",
+      type: "download",
+      openLink: "https://www.google.com/chrome/",
     },
     {
       name: "TeamViewer",
