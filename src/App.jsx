@@ -215,7 +215,7 @@ export default function App() {
         {links.map((item, index) => (
           <div
             key={index}
-            className="bg-white rounded-[999px] shadow-sm border px-5 py-3 flex items-center gap-4"
+            className="bg-white rounded-[999px] shadow-sm border px-5 py-3 flex items-center gap-4 justify-between"
           >
             <div className="flex-1">
               <a
@@ -226,6 +226,12 @@ export default function App() {
               </a>
             </div>
 
+            {/* Version — OLDIN TURADI */}
+            <div className="text-xs text-gray-500 whitespace-nowrap mr-2">
+              {t.version} {item.version}
+            </div>
+
+            {/* Download/Open — END TURADI */}
             <button
               onClick={() =>
                 item.type === "download"
@@ -240,10 +246,6 @@ export default function App() {
             >
               {item.type === "download" ? t.download : t.open}
             </button>
-
-            <div className="ml-2 text-xs text-gray-500 whitespace-nowrap">
-              {t.version} {item.version}
-            </div>
           </div>
         ))}
       </div>
