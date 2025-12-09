@@ -10,7 +10,7 @@ export default function App() {
 
   const API_URL = "https://med-backend-vmgf.onrender.com/materials";
 
-  // 🌐 MATERIALS FETCH QILAMIZ
+  // 🌐 BACKENDDAN MATERIALS OLYAPMIZ
   useEffect(() => {
     async function load() {
       try {
@@ -25,7 +25,7 @@ export default function App() {
     load();
   }, []);
 
-  // 🌙 TELEGRAM WEBAPP SUPPORT
+  // 🌙 TELEGRAM WEBAPP OPTIMIZATION
   useEffect(() => {
     if (window.Telegram?.WebApp) {
       window.Telegram.WebApp.expand();
@@ -44,6 +44,8 @@ export default function App() {
       saved: "Saved",
       profile: "Profile",
       categoriesTitle: "Categories:",
+      empty: "No materials yet.",
+      loading: "Loading...",
     },
     ru: {
       search: "Поиск...",
@@ -55,6 +57,8 @@ export default function App() {
       saved: "Сохранённые",
       profile: "Профиль",
       categoriesTitle: "Категории:",
+      empty: "Материалов пока нет.",
+      loading: "Загрузка...",
     },
   }[lang];
 
@@ -68,6 +72,7 @@ export default function App() {
     >
       {/* HEADER */}
       <div className="w-full max-w-[420px] flex justify-between items-center px-6 py-4 select-none">
+
         {/* Theme toggle */}
         <div className="flex items-center bg-white shadow-md rounded-full px-3 py-2 gap-2">
           <button
@@ -116,40 +121,7 @@ export default function App() {
         </div>
       </div>
 
-      {/* CATEGORIES */}
-      <div className="max-w-[420px] w-full px-4">
-        <div className="flex items-center justify-between mb-2">
-          <div className="font-bold text-sm">{t.categoriesTitle}</div>
-          <div className="px-3 py-1 bg-white rounded-full shadow text-xs border">
-            View all &gt;
-          </div>
-        </div>
-
-        {/* STATIC CATEGORY CARDS (o‘zgarmaydi) */}
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          {[
-            { icon: "🌐", title: "Webs", list: ["Speedtest", "Fast.com"] },
-            { icon: "📁", title: "Apps", list: ["Telegram", "Chrome"] },
-            { icon: "🤖", title: "Bots", list: ["FaceID", "MiniApp"] },
-            { icon: "🛡️", title: "VPNs", list: ["Outline", "v2rayN"] },
-          ].map((cat, i) => (
-            <div
-              key={i}
-              className="p-3 bg-white rounded-2xl shadow-sm border flex flex-col"
-            >
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-3xl">{cat.icon}</span>
-                <span className="font-bold text-sm text-blue-600">{cat.title}</span>
-              </div>
-              <div className="text-xs text-gray-500 leading-tight">
-                {cat.list.join("\n")}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* SEARCH BOX */}
+      {/* SEARCH */}
       <div className="max-w-[420px] w-full px-4 mb-3">
         <div className="flex items-center bg-white rounded-full shadow-md border px-4 py-2 text-sm text-gray-500">
           <span className="mr-2 text-xl">🔍</span>
@@ -161,36 +133,43 @@ export default function App() {
         </div>
       </div>
 
-      {/* 🔥 MATERIAL CARDS — BACKENDDAN KELGAN MA'LUMOTLAR */}
+      {/* 🔥 MATERIAL LIST */}
       <div className="max-w-[420px] w-full px-4 mt-1 space-y-3">
+
         {loading ? (
-          <div className="text-center py-10 text-gray-400">Yuklanmoqda...</div>
+          <div className="text-center py-10 text-gray-400">{t.loading}</div>
         ) : materials.length === 0 ? (
-          <div className="text-center py-10 text-gray-500">Hozircha material yo‘q.</div>
+          <div className="text-center py-10 text-gray-500">{t.empty}</div>
         ) : (
           materials.map((item, index) => (
             <div
               key={item.id}
-              className="bg-white rounded-[999px] shadow-sm border px-5 py-3 flex items-center gap-4 justify-between"
+              className="bg-white rounded-xl shadow-sm border px-5 py-4 flex flex-col gap-2"
             >
-              <div className="flex-1">
-                <a
-                  onClick={() => openHandler(item.post_link)}
-                  className="text-sm font-semibold text-blue-700 underline cursor-pointer"
-                >
-                  {index + 1}. {item.title}
-                </a>
+              {/* Title */}
+              <div className="text-sm font-semibold text-blue-700 cursor-pointer underline"
+                onClick={() => openHandler(item.post_link)}>
+                {index + 1}. {item.title}
               </div>
 
-              {/* VERSION */}
-              <div className="text-xs text-gray-500 whitespace-nowrap mr-2">
-                {t.version} {item.version || "—"}
+              {/* Preview Image */}
+              {item.preview_url && (
+                <img
+                  src={item.preview_url}
+                  className="w-full rounded-xl border"
+                  alt="preview"
+                />
+              )}
+
+              {/* Categories */}
+              <div className="text-xs text-gray-600">
+                {item.categories || "No category"}
               </div>
 
-              {/* DOWNLOAD button */}
+              {/* Download */}
               <button
                 onClick={() => openHandler(item.post_link)}
-                className="px-4 py-1 rounded-full text-xs font-semibold text-white shadow-md bg-gradient-to-r from-orange-400 to-orange-500"
+                className="px-4 py-2 rounded-full text-xs font-semibold text-white shadow-md bg-gradient-to-r from-orange-400 to-orange-500 w-full"
               >
                 {t.download}
               </button>
@@ -208,17 +187,14 @@ export default function App() {
               <span className="text-xs font-semibold mt-1">{t.home}</span>
             </div>
           </button>
-
           <button className="flex flex-col items-center text-gray-600 text-xs">
             <span className="text-lg">📂</span>
             {t.categories}
           </button>
-
           <button className="flex flex-col items-center text-gray-600 text-xs">
             <span className="text-lg">❤️</span>
             {t.saved}
           </button>
-
           <button className="flex flex-col items-center text-gray-600 text-xs">
             <span className="text-lg">👤</span>
             {t.profile}
