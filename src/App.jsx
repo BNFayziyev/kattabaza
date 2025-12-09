@@ -2,50 +2,49 @@ import React, { useState, useEffect } from "react";
 
 export default function App() {
   const [theme, setTheme] = useState("light");
-  const [lang, setLang] = useState("en");
+  const [lang, setLang] = useState("uz");
   const [materials, setMaterials] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const isDark = theme === "dark";
 
-  const API_URL = "https://med-backend-vmgf.onrender.com/materials";
+  const SHEET_URL =
+    "https://opensheet.elk.sh/1z7O8Xlq5W3N8VR4SljEYT4uQpW6O3tEce5g5O5y1y5/Materials";
 
-  // 🌐 BACKENDDAN MATERIALS OLYAPMIZ
+  // 🟦 GOOGLE SHEETSDAN O‘QISH
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch(API_URL);
+        const res = await fetch(SHEET_URL);
         const data = await res.json();
-        setMaterials(data);
+
+        // Google Sheetsdan keladigan kategoriyalarni massivga aylantiramiz
+        const fixed = data.map((item) => ({
+          ...item,
+          categories: item.categories
+            ? item.categories.split(",").map((c) => c.trim())
+            : [],
+        }));
+
+        setMaterials(fixed);
       } catch (err) {
-        console.error("Fetch error:", err);
+        console.error("Sheet fetch error:", err);
       }
       setLoading(false);
     }
     load();
   }, []);
 
-  // 🌙 TELEGRAM WEBAPP OPTIMIZATION
-  useEffect(() => {
-    if (window.Telegram?.WebApp) {
-      window.Telegram.WebApp.expand();
-      window.Telegram.WebApp.ready();
-    }
-  }, []);
-
   const t = {
-    en: {
-      search: "Search...",
-      version: "Version",
-      download: "Download",
-      open: "Open",
-      home: "Home",
-      categories: "Categories",
-      saved: "Saved",
-      profile: "Profile",
-      categoriesTitle: "Categories:",
-      empty: "No materials yet.",
-      loading: "Loading...",
+    uz: {
+      search: "Qidirish...",
+      version: "Versiya",
+      download: "Yuklash",
+      open: "Ochish",
+      home: "Bosh sahifa",
+      categories: "Kategoriyalar",
+      saved: "Saqlanganlar",
+      profile: "Profil",
     },
     ru: {
       search: "Поиск...",
@@ -56,9 +55,6 @@ export default function App() {
       categories: "Категории",
       saved: "Сохранённые",
       profile: "Профиль",
-      categoriesTitle: "Категории:",
-      empty: "Материалов пока нет.",
-      loading: "Загрузка...",
     },
   }[lang];
 
@@ -72,12 +68,11 @@ export default function App() {
     >
       {/* HEADER */}
       <div className="w-full max-w-[420px] flex justify-between items-center px-6 py-4 select-none">
-
-        {/* Theme toggle */}
+        {/* Theme */}
         <div className="flex items-center bg-white shadow-md rounded-full px-3 py-2 gap-2">
           <button
             onClick={() => setTheme("light")}
-            className={`px-2 py-1 rounded-full text-sm font-bold shadow-sm transition ${
+            className={`px-2 py-1 rounded-full text-sm font-bold ${
               theme === "light"
                 ? "bg-orange-400 text-white"
                 : "text-gray-500 bg-transparent"
@@ -87,7 +82,7 @@ export default function App() {
           </button>
           <button
             onClick={() => setTheme("dark")}
-            className={`px-2 py-1 rounded-full text-sm font-bold shadow-sm transition ${
+            className={`px-2 py-1 rounded-full text-sm font-bold ${
               theme === "dark"
                 ? "bg-indigo-500 text-white"
                 : "text-gray-500 bg-transparent"
@@ -100,20 +95,20 @@ export default function App() {
         {/* Title */}
         <div className="text-xl font-extrabold tracking-wide">KattaBaza</div>
 
-        {/* Language Toggle */}
+        {/* Language */}
         <div className="flex items-center bg-white shadow-md rounded-full px-3 py-2 gap-2 text-sm font-semibold">
           <button
-            onClick={() => setLang("en")}
-            className={`px-2 py-1 rounded-full transition ${
-              lang === "en" ? "bg-orange-400 text-white shadow" : "text-gray-500"
+            onClick={() => setLang("uz")}
+            className={`px-2 py-1 rounded-full ${
+              lang === "uz" ? "bg-orange-400 text-white" : "text-gray-500"
             }`}
           >
-            EN
+            UZ
           </button>
           <button
             onClick={() => setLang("ru")}
-            className={`px-2 py-1 rounded-full transition ${
-              lang === "ru" ? "bg-orange-400 text-white shadow" : "text-gray-500"
+            className={`px-2 py-1 rounded-full ${
+              lang === "ru" ? "bg-orange-400 text-white" : "text-gray-500"
             }`}
           >
             RU
@@ -123,7 +118,7 @@ export default function App() {
 
       {/* SEARCH */}
       <div className="max-w-[420px] w-full px-4 mb-3">
-        <div className="flex items-center bg-white rounded-full shadow-md border px-4 py-2 text-sm text-gray-500">
+        <div className="flex items-center bg-white rounded-full shadow-md border px-4 py-2">
           <span className="mr-2 text-xl">🔍</span>
           <input
             type="text"
@@ -133,43 +128,36 @@ export default function App() {
         </div>
       </div>
 
-      {/* 🔥 MATERIAL LIST */}
+      {/* MATERIALS */}
       <div className="max-w-[420px] w-full px-4 mt-1 space-y-3">
-
         {loading ? (
-          <div className="text-center py-10 text-gray-400">{t.loading}</div>
+          <div className="text-center py-10 text-gray-400">Yuklanmoqda...</div>
         ) : materials.length === 0 ? (
-          <div className="text-center py-10 text-gray-500">{t.empty}</div>
+          <div className="text-center py-10 text-gray-500">
+            Hozircha material yo‘q.
+          </div>
         ) : (
           materials.map((item, index) => (
             <div
               key={item.id}
-              className="bg-white rounded-xl shadow-sm border px-5 py-4 flex flex-col gap-2"
+              className="bg-white rounded-[999px] shadow-sm border px-5 py-3 flex items-center justify-between"
             >
-              {/* Title */}
-              <div className="text-sm font-semibold text-blue-700 cursor-pointer underline"
-                onClick={() => openHandler(item.post_link)}>
-                {index + 1}. {item.title}
+              <div className="flex-1">
+                <a
+                  className="text-sm font-semibold text-blue-700 underline cursor-pointer"
+                  onClick={() => openHandler(item.post_link)}
+                >
+                  {index + 1}. {item.title}
+                </a>
               </div>
 
-              {/* Preview Image */}
-              {item.preview_url && (
-                <img
-                  src={item.preview_url}
-                  className="w-full rounded-xl border"
-                  alt="preview"
-                />
-              )}
-
-              {/* Categories */}
-              <div className="text-xs text-gray-600">
-                {item.categories || "No category"}
+              <div className="text-xs text-gray-500 whitespace-nowrap mr-2">
+                {t.version}: {item.version || "—"}
               </div>
 
-              {/* Download */}
               <button
                 onClick={() => openHandler(item.post_link)}
-                className="px-4 py-2 rounded-full text-xs font-semibold text-white shadow-md bg-gradient-to-r from-orange-400 to-orange-500 w-full"
+                className="px-4 py-1 rounded-full text-xs font-semibold text-white bg-orange-500 shadow"
               >
                 {t.download}
               </button>
@@ -178,27 +166,23 @@ export default function App() {
         )}
       </div>
 
-      {/* BOTTOM NAVBAR */}
-      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[92%] max-w-[420px]">
+      {/* BOTTOM NAV */}
+      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[92%] max-w-[420px]">
         <div className="bg-white rounded-full shadow-lg border flex justify-around py-3 px-4">
-          <button className="flex flex-col items-center -mt-4">
-            <div className="bg-blue-600 text-white px-5 py-2 rounded-full shadow-lg flex flex-col items-center text-center">
-              <span className="text-lg">🏠</span>
-              <span className="text-xs font-semibold mt-1">{t.home}</span>
+          <div className="flex flex-col items-center -mt-4">
+            <div className="bg-blue-600 text-white px-5 py-2 rounded-full shadow-lg">
+              🏠 <div className="text-xs">{t.home}</div>
             </div>
-          </button>
-          <button className="flex flex-col items-center text-gray-600 text-xs">
-            <span className="text-lg">📂</span>
-            {t.categories}
-          </button>
-          <button className="flex flex-col items-center text-gray-600 text-xs">
-            <span className="text-lg">❤️</span>
-            {t.saved}
-          </button>
-          <button className="flex flex-col items-center text-gray-600 text-xs">
-            <span className="text-lg">👤</span>
-            {t.profile}
-          </button>
+          </div>
+          <div className="text-xs text-gray-600 flex flex-col items-center">
+            📂 {t.categories}
+          </div>
+          <div className="text-xs text-gray-600 flex flex-col items-center">
+            ❤️ {t.saved}
+          </div>
+          <div className="text-xs text-gray-600 flex flex-col items-center">
+            👤 {t.profile}
+          </div>
         </div>
       </div>
     </div>
