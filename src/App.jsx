@@ -9,7 +9,7 @@ export default function App() {
   const isDark = theme === "dark";
 
   const SHEET_URL =
-    "https://opensheet.elk.sh/1z7O8Xlq5W3N8VR4SljEYT4uQpW6O3tEce5g5O5y1y5/Materials";
+    "https://opensheet.elk.sh/1z7O8Xlq5WN3VRv45lEyTu4QpW6O3tEcefsg5O5y1y5g/Materials";
 
   // 🟦 GOOGLE SHEETSDAN O‘QISH
   useEffect(() => {
