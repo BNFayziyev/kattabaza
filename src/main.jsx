@@ -8,12 +8,3 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <App />
   </React.StrictMode>
 );
-from fastapi.middleware.cors import CORSMiddleware
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],   # Hamma domenlarga ruxsat
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
