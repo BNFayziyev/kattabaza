@@ -139,34 +139,46 @@ export default function App() {
           materials.map((item, index) => (
             <div
               key={item.id}
-              className="bg-white rounded-[999px] shadow-sm border px-5 py-3 flex items-center justify-between gap-3"
+              className="bg-white rounded-3xl shadow-sm border px-5 py-4 flex flex-col gap-3"
             >
-              {/* Title – Telegram link */}
-              <div className="flex-1">
-                <a
-                  className="text-sm font-semibold text-blue-700 underline cursor-pointer"
-                  onClick={() => openHandler(item.post_link)}
-                >
-                  {index + 1}. {item.title}
-                </a>
-              </div>
-
-              {/* BLUE BUTTON – OPEN TELEGRAM POST */}
-              <button
+              {/* TITLE */}
+              <a
+                className="text-sm font-semibold text-blue-700 underline cursor-pointer"
                 onClick={() => openHandler(item.post_link)}
-                className="px-3 py-1 rounded-full text-xs font-semibold text-white bg-blue-600 whitespace-nowrap"
               >
-                Download from Telegram
-              </button>
+                {index + 1}. {item.title}
+              </a>
 
-              {/* ORANGE BUTTON – DIRECT FILE DOWNLOAD */}
-              <button
-                onClick={() => openHandler(item.file_url)}
-                className="px-4 py-1 rounded-full text-xs font-semibold text-white"
-                style={{ backgroundColor: "#f76400" }}
-              >
-                Download
-              </button>
+              {/* BUTTON ROW */}
+              <div className="flex gap-3">
+
+                {/* TELEGRAM DOWNLOAD BUTTON */}
+                <button
+                  onClick={() => openHandler(item.post_link)}
+                  className="flex items-center gap-2 px-3 py-2 rounded-full bg-blue-600 text-white text-xs font-semibold flex-1 justify-center"
+                >
+                  <img
+                    src="/pic/icontg128.png"
+                    className="w-4 h-4"
+                    alt="tg icon"
+                  />
+                  Download
+                </button>
+
+                {/* DIRECT FILE DOWNLOAD */}
+                <button
+                  onClick={() => openHandler(item.file_url)}
+                  className="flex items-center gap-2 px-3 py-2 rounded-full text-white text-xs font-semibold flex-1 justify-center"
+                  style={{ backgroundColor: "#f76400" }}
+                >
+                  <img
+                    src="/pic/icondw128.png"
+                    className="w-4 h-4"
+                    alt="dw icon"
+                  />
+                  Download
+                </button>
+              </div>
             </div>
           ))
         )}
