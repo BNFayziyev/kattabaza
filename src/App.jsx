@@ -168,9 +168,9 @@ export default function App() {
                     </a>
 
                     {/* DESCRIPTION (ONE LINE) */}
-                    {item.descrip && (
+                    {item.description && (
                       <p className="text-xs text-gray-500 truncate max-w-[220px]">
-                        {item.descrip}
+                        {item.description}
                       </p>
                     )}
                   </div>
