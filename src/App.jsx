@@ -145,23 +145,36 @@ export default function App() {
               <div className="flex items-center justify-between gap-3">
 
                 {/* LEFT: Preview + Title */}
-                <div className="flex items-center gap-3 w-full">
+                {/* LEFT: Preview + Title + Description */}
+                <div className="flex items-start gap-3 w-full">
+
                   {item.preview_url ? (
                     <img
                       src={item.preview_url}
                       alt="preview"
-                      className="w-12 h-12 rounded-md object-cover border"
+                      className="w-12 h-12 rounded-md object-cover border mt-1"
                     />
                   ) : (
-                    <div className="w-12 h-12 bg-gray-300 rounded-md"></div>
+                    <div className="w-12 h-12 bg-gray-300 rounded-md mt-1"></div>
                   )}
 
-                  <a
-                    className="text-sm font-semibold text-blue-700 underline cursor-pointer"
-                    onClick={() => openHandler(item.post_link)}
-                  >
-                    {item.title}
-                  </a>
+                  <div className="flex flex-col">
+                    {/* CLEAN TITLE */}
+                    <a
+                      className="text-sm font-semibold text-blue-700 underline cursor-pointer"
+                      onClick={() => openHandler(item.post_link)}
+                    >
+                      {item.title.replace(/\.[^/.]+$/, "")}
+                    </a>
+
+                    {/* DESCRIPTION (ONE LINE) */}
+                    {item.descrip && (
+                      <p className="text-xs text-gray-500 truncate max-w-[220px]">
+                        {item.descrip}
+                      </p>
+                    )}
+                  </div>
+
                 </div>
 
                 {/* RIGHT: FILE FORMAT + SIZE */}
