@@ -162,23 +162,28 @@ export default function App() {
                       {item.title ? item.title.replace(/\.[^/.]+$/, "") : ""}
                     </a>
 
+                    {/* DESCRIPTION (2 LINES) */}
                     {item.description && (
-                      <p className="text-xs text-gray-500 truncate max-w-[220px]">
+                      <p className="text-xs text-gray-500 line-clamp-2 max-w-[220px]">
                         {item.description}
                       </p>
                     )}
+
                   </div>
                 </div>
 
                 {/* RIGHT: file type + size */}
-                <div className="flex flex-col items-end gap-1 min-w-[55px]">
-                  <div className="px-2 py-0.5 text-[10px] rounded-full bg-gray-100 border font-semibold">
+                {/* RIGHT: FILE FORMAT + SIZE */}
+                <div className="flex flex-col items-end gap-1 min-w-[60px]">
+                  <div className="px-2 py-0.5 text-[10px] rounded-full bg-gray-100 border font-semibold text-center whitespace-nowrap">
                     {item.file_type || "—"}
                   </div>
-                  <div className="px-2 py-0.5 text-[10px] rounded-full bg-gray-100 border text-gray-600">
+
+                  <div className="px-2 py-0.5 text-[10px] rounded-full bg-gray-100 border text-gray-600 whitespace-nowrap min-w-[60px] text-center">
                     {item.size_mb ? item.size_mb + " MB" : "—"}
                   </div>
                 </div>
+
               </div>
 
               {/* BUTTONS */}
