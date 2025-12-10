@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import clsx from "clsx"; // ← MUHIM: clsx NI IMPORT QILAMIZ
 
 export default function App() {
   const [theme, setTheme] = useState("light");
@@ -18,7 +19,6 @@ export default function App() {
         const res = await fetch(SHEET_URL);
         const data = await res.json();
 
-        // Google Sheetsdan keladigan kategoriyalarni massivga aylantiramiz
         const fixed = data.map((item) => ({
           ...item,
           categories: item.categories
@@ -68,7 +68,6 @@ export default function App() {
     >
       {/* HEADER */}
       <div className="w-full max-w-[420px] flex justify-between items-center px-6 py-4 select-none">
-        {/* Theme */}
         <div className="flex items-center bg-white shadow-md rounded-full px-3 py-2 gap-2">
           <button
             onClick={() => setTheme("light")}
@@ -92,10 +91,8 @@ export default function App() {
           </button>
         </div>
 
-        {/* Title */}
         <div className="text-xl font-extrabold tracking-wide">KattaBaza</div>
 
-        {/* Language */}
         <div className="flex items-center bg-white shadow-md rounded-full px-3 py-2 gap-2 text-sm font-semibold">
           <button
             onClick={() => setLang("uz")}
@@ -127,76 +124,87 @@ export default function App() {
           />
         </div>
       </div>
+
       {/* MATERIALS */}
-      import clsx from "clsx";
-
-      export default function MaterialCard({ item }) {
-        const openHandler = (url) => {
-          if (url) window.open(url, "_blank");
-        };
-
-        return (
-          <div className="bg-white rounded-2xl shadow-md p-4 flex flex-col gap-2 w-full mb-4">
-            {/* MEDIA PREVIEW */}
-            <div className="flex items-center gap-3">
-              <img
-                src={item.preview_url || "/pic/default_preview.png"}
-                alt="preview"
-                className="w-12 h-12 rounded-lg object-cover"
-              />
-
-              <div className="flex flex-col">
-                {/* FILE NAME (without extension) */}
-                <span className="font-semibold text-sm text-gray-900">
-                  {item.title.replace(/\.[^/.]+$/, "")}
-                </span>
-
-                {/* DESCRIPTION */}
-                <span className="text-xs text-gray-600 truncate w-40">
-                  {item.description}
-                </span>
-              </div>
-
-              {/* FILE TYPE + SIZE */}
-              <div className="ml-auto flex flex-col items-end">
-                <div className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">
-                  {item.file_type}
-                </div>
-                <div className="text-gray-500 text-xs mt-1">
-                  {item.size_mb ? item.size_mb + " MB" : ""}
-                </div>
-              </div>
-            </div>
-
-            {/* BUTTONS */}
-            <div className="flex gap-2 mt-2">
-              {/* DOWNLOAD FROM TELEGRAM */}
-              <button
-                onClick={() => openHandler(item.post_link)}
-                className="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600 text-white text-xs font-semibold flex-1 justify-center"
-              >
-                <img src="/pic/icontg128.png" className="w-4 h-4" />
-                Download from Telegram
-              </button>
-
-              {/* DIRECT DOWNLOAD (file_url required) */}
-              <button
-                onClick={() => item.file_url && openHandler(item.file_url)}
-                disabled={!item.file_url}
-                className={clsx(
-                  "flex items-center gap-2 px-4 py-2 rounded-full text-white text-xs font-semibold flex-1 justify-center transition",
-                  item.file_url
-                    ? "bg-orange-500 hover:bg-orange-600"
-                    : "bg-orange-300 opacity-50 cursor-not-allowed"
-                )}
-              >
-                <img src="/pic/icondw128.png" className="w-4 h-4" />
-                Download
-              </button>
-            </div>
+      <div className="max-w-[420px] w-full px-4 mt-1 space-y-3">
+        {loading ? (
+          <div className="text-center py-10 text-gray-400">Yuklanmoqda...</div>
+        ) : materials.length === 0 ? (
+          <div className="text-center py-10 text-gray-500">
+            Hozircha material yo‘q.
           </div>
-        );
-      }
+        ) : (
+          materials.map((item, index) => (
+            <div
+              key={item.id}
+              className="bg-white rounded-3xl shadow-sm border px-5 py-4 flex flex-col gap-3"
+            >
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-start gap-3 w-full">
+                  {item.preview_url ? (
+                    <img
+                      src={item.preview_url}
+                      className="w-12 h-12 rounded-md object-cover border mt-1"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 bg-gray-300 rounded-md mt-1"></div>
+                  )}
+
+                  <div className="flex flex-col">
+                    <a
+                      className="text-sm font-semibold text-blue-700 underline cursor-pointer"
+                      onClick={() => openHandler(item.post_link)}
+                    >
+                      {item.title.replace(/\.[^/.]+$/, "")}
+                    </a>
+
+                    {item.description && (
+                      <p className="text-xs text-gray-500 truncate max-w-[220px]">
+                        {item.description}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-end gap-1 min-w-[55px]">
+                  <div className="px-2 py-0.5 text-[10px] rounded-full bg-gray-100 border font-semibold">
+                    {item.file_type || "—"}
+                  </div>
+                  <div className="px-2 py-0.5 text-[10px] rounded-full bg-gray-100 border text-gray-600">
+                    {item.size_mb ? item.size_mb + " MB" : "—"}
+                  </div>
+                </div>
+              </div>
+
+              {/* BUTTONS */}
+              <div className="flex gap-3">
+                {/* TELEGRAM DOWNLOAD */}
+                <button
+                  onClick={() => openHandler(item.post_link)}
+                  className="flex items-center gap-2 px-3 py-2 rounded-full bg-blue-600 text-white text-xs font-semibold flex-1 justify-center"
+                >
+                  <img src="/pic/icontg128.png" className="w-4 h-4" />
+                  Download
+                </button>
+
+                {/* DIRECT DOWNLOAD */}
+                <button
+                  onClick={() => item.file_url && openHandler(item.file_url)}
+                  disabled={!item.file_url}
+                  className={clsx(
+                    "flex items-center gap-2 px-3 py-2 rounded-full text-white text-xs font-semibold flex-1 justify-center",
+                    item.file_url ? "" : "opacity-50 cursor-not-allowed"
+                  )}
+                  style={{ backgroundColor: "#f76400" }}
+                >
+                  <img src="/pic/icondw128.png" className="w-4 h-4" />
+                  Download
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
 
       {/* BOTTOM NAV */}
       <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[92%] max-w-[420px]">
