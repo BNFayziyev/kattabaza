@@ -127,7 +127,6 @@ export default function App() {
           />
         </div>
       </div>
-
       {/* MATERIALS */}
       <div className="max-w-[420px] w-full px-4 mt-1 space-y-3">
         {loading ? (
@@ -140,8 +139,9 @@ export default function App() {
           materials.map((item, index) => (
             <div
               key={item.id}
-              className="bg-white rounded-[999px] shadow-sm border px-5 py-3 flex items-center justify-between"
+              className="bg-white rounded-[999px] shadow-sm border px-5 py-3 flex items-center justify-between gap-3"
             >
+              {/* Title – Telegram link */}
               <div className="flex-1">
                 <a
                   className="text-sm font-semibold text-blue-700 underline cursor-pointer"
@@ -151,15 +151,21 @@ export default function App() {
                 </a>
               </div>
 
-              <div className="text-xs text-gray-500 whitespace-nowrap mr-2">
-                {t.version}: {item.version || "—"}
-              </div>
-
+              {/* BLUE BUTTON – OPEN TELEGRAM POST */}
               <button
                 onClick={() => openHandler(item.post_link)}
-                className="px-4 py-1 rounded-full text-xs font-semibold text-white bg-orange-500 shadow"
+                className="px-3 py-1 rounded-full text-xs font-semibold text-white bg-blue-600 whitespace-nowrap"
               >
-                {t.download}
+                Download from Telegram
+              </button>
+
+              {/* ORANGE BUTTON – DIRECT FILE DOWNLOAD */}
+              <button
+                onClick={() => openHandler(item.file_url)}
+                className="px-4 py-1 rounded-full text-xs font-semibold text-white"
+                style={{ backgroundColor: "#f76400" }}
+              >
+                Download
               </button>
             </div>
           ))
