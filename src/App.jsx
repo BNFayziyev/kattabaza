@@ -142,12 +142,25 @@ export default function App() {
               className="bg-white rounded-3xl shadow-sm border px-5 py-4 flex flex-col gap-3"
             >
               {/* TITLE */}
-              <a
-                className="text-sm font-semibold text-blue-700 underline cursor-pointer"
-                onClick={() => openHandler(item.post_link)}
-              >
-                {index + 1}. {item.title}
-              </a>
+              {/* TITLE WITH PREVIEW IMAGE */}
+              <div className="flex items-center gap-3">
+                {item.preview_url ? (
+                  <img
+                    src={item.preview_url}
+                    alt="preview"
+                    className="w-10 h-10 rounded-md object-cover border"
+                  />
+                ) : (
+                  <div className="w-10 h-10 bg-gray-300 rounded-md"></div>
+                )}
+
+                <a
+                  className="text-sm font-semibold text-blue-700 underline cursor-pointer"
+                  onClick={() => openHandler(item.post_link)}
+                >
+                  {item.title}
+                </a>
+              </div>
 
               {/* BUTTON ROW */}
               <div className="flex gap-3">
