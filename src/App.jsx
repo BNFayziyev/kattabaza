@@ -128,74 +128,66 @@ export default function App() {
         </div>
       </div>
       {/* MATERIALS */}
-      <div className="max-w-[420px] w-full px-4 mt-1 space-y-3">
-        {loading ? (
-          <div className="text-center py-10 text-gray-400">Yuklanmoqda...</div>
-        ) : materials.length === 0 ? (
-          <div className="text-center py-10 text-gray-500">
-            Hozircha material yo‘q.
-          </div>
-        ) : (
-          materials.map((item, index) => (
-            <div
-              key={item.id}
-              className="bg-white rounded-3xl shadow-sm border px-5 py-4 flex flex-col gap-3"
-            >
-              {/* TITLE */}
-              {/* TITLE WITH PREVIEW IMAGE */}
-              <div className="flex items-center gap-3">
-                {item.preview_url ? (
-                  <img
-                    src={item.preview_url}
-                    alt="preview"
-                    className="w-10 h-10 rounded-md object-cover border"
-                  />
-                ) : (
-                  <div className="w-10 h-10 bg-gray-300 rounded-md"></div>
-                )}
+      <div
+  key={item.id}
+  className="bg-white rounded-3xl shadow-sm border px-5 py-4 flex flex-col gap-3"
+>
+  {/* ROW: IMAGE + TITLE + FILE INFO */}
+  <div className="flex items-center justify-between gap-3">
 
-                <a
-                  className="text-sm font-semibold text-blue-700 underline cursor-pointer"
-                  onClick={() => openHandler(item.post_link)}
-                >
-                  {item.title}
-                </a>
-              </div>
+    {/* LEFT: Preview + Title */}
+    <div className="flex items-center gap-3 w-full">
+      {item.preview_url ? (
+        <img
+          src={item.preview_url}
+          alt="preview"
+          className="w-12 h-12 rounded-md object-cover border"
+        />
+      ) : (
+        <div className="w-12 h-12 bg-gray-300 rounded-md"></div>
+      )}
 
-              {/* BUTTON ROW */}
-              <div className="flex gap-3">
+      <a
+        className="text-sm font-semibold text-blue-700 underline cursor-pointer"
+        onClick={() => openHandler(item.post_link)}
+      >
+        {item.title}
+      </a>
+    </div>
 
-                {/* TELEGRAM DOWNLOAD BUTTON */}
-                <button
-                  onClick={() => openHandler(item.post_link)}
-                  className="flex items-center gap-2 px-3 py-2 rounded-full bg-blue-600 text-white text-xs font-semibold flex-1 justify-center"
-                >
-                  <img
-                    src="/pic/icontg128.png"
-                    className="w-4 h-4"
-                    alt="tg icon"
-                  />
-                  Download
-                </button>
-
-                {/* DIRECT FILE DOWNLOAD */}
-                <button
-                  onClick={() => openHandler(item.file_url)}
-                  className="flex items-center gap-2 px-3 py-2 rounded-full text-white text-xs font-semibold flex-1 justify-center"
-                  style={{ backgroundColor: "#f76400" }}
-                >
-                  <img
-                    src="/pic/icondw128.png"
-                    className="w-4 h-4"
-                    alt="dw icon"
-                  />
-                  Download
-                </button>
-              </div>
-            </div>
-          ))
-        )}
+    {/* RIGHT: FILE FORMAT + SIZE */}
+    <div className="flex flex-col items-end gap-1 min-w-[70px]">
+      <div className="px-2 py-1 text-xs rounded-full bg-gray-100 border font-semibold">
+        {item.file_type || "—"}
       </div>
+      <div className="px-2 py-1 text-xs rounded-full bg-gray-100 border text-gray-600">
+        {item.file_size || "—"}
+      </div>
+    </div>
+
+  </div>
+
+  {/* DOWNLOAD BUTTONS */}
+  <div className="flex gap-3">
+    <button
+      onClick={() => openHandler(item.post_link)}
+      className="flex items-center gap-2 px-3 py-2 rounded-full bg-blue-600 text-white text-xs font-semibold flex-1 justify-center"
+    >
+      <img src="/pic/icontg128.png" className="w-4 h-4" />
+      Download
+    </button>
+
+    <button
+      onClick={() => openHandler(item.file_url)}
+      className="flex items-center gap-2 px-3 py-2 rounded-full text-white text-xs font-semibold flex-1 justify-center"
+      style={{ backgroundColor: "#f76400" }}
+    >
+      <img src="/pic/icondw128.png" className="w-4 h-4" />
+      Download
+    </button>
+  </div>
+
+</div>
 
       {/* BOTTOM NAV */}
       <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[92%] max-w-[420px]">
