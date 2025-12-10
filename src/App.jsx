@@ -218,23 +218,37 @@ export default function App() {
 
       {/* BOTTOM NAV */}
       <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[92%] max-w-[420px]">
-        <div className="bg-white rounded-full shadow-lg border flex justify-around py-3 px-4">
-          <div className="flex flex-col items-center -mt-4">
-            <div className="bg-blue-600 text-white px-5 py-2 rounded-full shadow-lg">
-              🏠 <div className="text-xs">{t.home}</div>
+        <div className="bg-white rounded-full shadow-lg border flex justify-around py-3 px-4 items-center">
+
+          {/* HOME (ACTIVE) */}
+          <div className="flex flex-col items-center">
+            <div className="bg-[#f76400] text-white px-5 py-2 rounded-full shadow-md flex items-center gap-1">
+              <span className="text-lg">🏠</span>
+              <span className="text-xs">{t.home}</span>
             </div>
           </div>
+
+          {/* Kategoriyalar */}
           <div className="text-xs text-gray-600 flex flex-col items-center">
-            📂 {t.categories}
+            <span className="text-lg">📂</span>
+            {t.categories}
           </div>
+
+          {/* Saqlanganlar */}
           <div className="text-xs text-gray-600 flex flex-col items-center">
-            ❤️ {t.saved}
+            <span className="text-lg">❤️</span>
+            {t.saved}
           </div>
+
+          {/* Profil */}
           <div className="text-xs text-gray-600 flex flex-col items-center">
-            👤 {t.profile}
+            <span className="text-lg">👤</span>
+            {t.profile}
           </div>
+
         </div>
       </div>
+
     </div>
   );
 }
