@@ -73,7 +73,7 @@ export default function App() {
             onClick={() => setTheme("light")}
             className={`px-2 py-1 rounded-full text-sm font-bold ${
               theme === "light"
-                ? "bg-orange-400 text-white"
+                ? "bg-[#f76400] text-white"
                 : "text-gray-500 bg-transparent"
             }`}
           >
@@ -83,7 +83,7 @@ export default function App() {
             onClick={() => setTheme("dark")}
             className={`px-2 py-1 rounded-full text-sm font-bold ${
               theme === "dark"
-                ? "bg-indigo-500 text-white"
+                ? "bg-[#f76400] text-white"
                 : "text-gray-500 bg-transparent"
             }`}
           >
@@ -99,7 +99,7 @@ export default function App() {
           <button
             onClick={() => setLang("uz")}
             className={`px-2 py-1 rounded-full ${
-              lang === "uz" ? "bg-orange-400 text-white" : "text-gray-500"
+              lang === "uz" ? "bg-[#f76400] text-white" : "text-gray-500"
             }`}
           >
             UZ
@@ -107,7 +107,7 @@ export default function App() {
           <button
             onClick={() => setLang("ru")}
             className={`px-2 py-1 rounded-full ${
-              lang === "ru" ? "bg-orange-400 text-white" : "text-gray-500"
+              lang === "ru" ? "bg-[#f76400] text-white" : "text-gray-500"
             }`}
           >
             RU
