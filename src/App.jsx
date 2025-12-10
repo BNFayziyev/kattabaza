@@ -203,13 +203,18 @@ export default function App() {
                 </button>
 
                 <button
-                  onClick={() => openHandler(item.file_url)}
-                  className="flex items-center gap-2 px-3 py-2 rounded-full text-white text-xs font-semibold flex-1 justify-center"
+                  onClick={() => item.file_url && openHandler(item.file_url)}
+                  disabled={!item.file_url}
+                  className={clsx(
+                    "flex items-center gap-2 px-3 py-2 rounded-full text-white text-xs font-semibold flex-1 justify-center",
+                    item.file_url ? "" : "opacity-50 cursor-not-allowed"
+                  )}
                   style={{ backgroundColor: "#f76400" }}
                 >
                   <img src="/pic/icondw128.png" className="w-4 h-4" />
                   Download
                 </button>
+
               </div>
 
             </div>
