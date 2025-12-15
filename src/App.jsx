@@ -26,6 +26,8 @@ export default function App() {
 
   // 🟦 GOOGLE SHEETSDAN O‘QISH
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
     async function load() {
       try {
         const [mRes, cRes] = await Promise.all([
@@ -50,8 +52,10 @@ export default function App() {
       }
       setLoading(false);
     }
+
     load();
   }, []);
+
 
   // ✅ URL -> STATE sync (FAKAT QO‘SHILDI)
   useEffect(() => {
