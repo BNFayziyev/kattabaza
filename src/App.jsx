@@ -9,7 +9,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
 
   // 🔹 NAV STATE (o‘zgarmagan mantiq)
-  const [view, setView] = useState("home"); // home | categories | channel | category
+  const [activeTab, setActiveTab] = useState("home"); // home | categories | channel | category
   const [selectedChannel, setSelectedChannel] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
