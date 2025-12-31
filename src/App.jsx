@@ -372,45 +372,93 @@ export default function App() {
       </div>
 
       {/* BOTTOM NAV — FAQAT CLICK QO‘SHILDI */}
+      
       <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[92%] max-w-[420px]">
         <div className="bg-white rounded-full shadow-lg border flex justify-around py-3 px-4 items-center">
+
+          {/* HOME */}
           <div
             className="flex flex-col items-center cursor-pointer"
             onClick={() => {
               setView("home");
-              // ✅ URL (FAKAT QO‘SHILDI)
+              setActiveTab("home");
               navigate("/home");
             }}
           >
-            <div className="bg-[#f76400] text-white px-5 py-2 rounded-full shadow-md flex items-center gap-1">
-              <span className="text-lg">🏠</span>
-              <span className="text-xs">{t.home}</span>
-            </div>
+            {activeTab === "home" ? (
+              <div className="bg-[#f76400] text-white px-5 py-2 rounded-full shadow-md flex items-center gap-1">
+                <span className="text-lg">🏠</span>
+                <span className="text-xs">{t.home}</span>
+              </div>
+            ) : (
+              <>
+                <span className="text-lg">🏠</span>
+                <span className="text-xs text-gray-600">{t.home}</span>
+              </>
+            )}
           </div>
 
+          {/* CATEGORIES */}
           <div
-            className="text-xs text-gray-600 flex flex-col items-center cursor-pointer"
+            className="flex flex-col items-center cursor-pointer"
             onClick={() => {
               setView("categories");
-              // ✅ URL (FAKAT QO‘SHILDI)
+              setActiveTab("categories");
               navigate("/categories");
             }}
           >
-            <span className="text-lg">📂</span>
-            {t.categories}
+            {activeTab === "categories" ? (
+              <div className="bg-[#f76400] text-white px-5 py-2 rounded-full shadow-md flex items-center gap-1">
+                <span className="text-lg">📂</span>
+                <span className="text-xs">{t.categories}</span>
+              </div>
+            ) : (
+              <>
+                <span className="text-lg">📂</span>
+                <span className="text-xs text-gray-600">{t.categories}</span>
+              </>
+            )}
           </div>
 
-          <div className="text-xs text-gray-600 flex flex-col items-center">
-            <span className="text-lg">❤️</span>
-            {t.saved}
+          {/* SAVED */}
+          <div
+            className="flex flex-col items-center cursor-pointer"
+            onClick={() => setActiveTab("saved")}
+          >
+            {activeTab === "saved" ? (
+              <div className="bg-[#f76400] text-white px-5 py-2 rounded-full shadow-md flex items-center gap-1">
+                <span className="text-lg">❤️</span>
+                <span className="text-xs">{t.saved}</span>
+              </div>
+            ) : (
+              <>
+                <span className="text-lg">❤️</span>
+                <span className="text-xs text-gray-600">{t.saved}</span>
+              </>
+            )}
           </div>
 
-          <div className="text-xs text-gray-600 flex flex-col items-center">
-            <span className="text-lg">👤</span>
-            {t.profile}
+          {/* PROFILE */}
+          <div
+            className="flex flex-col items-center cursor-pointer"
+            onClick={() => setActiveTab("profile")}
+          >
+            {activeTab === "profile" ? (
+              <div className="bg-[#f76400] text-white px-5 py-2 rounded-full shadow-md flex items-center gap-1">
+                <span className="text-lg">👤</span>
+                <span className="text-xs">{t.profile}</span>
+              </div>
+            ) : (
+              <>
+                <span className="text-lg">👤</span>
+                <span className="text-xs text-gray-600">{t.profile}</span>
+              </>
+            )}
           </div>
+
         </div>
       </div>
+
     </div>
   );
 }
