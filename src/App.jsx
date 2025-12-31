@@ -229,6 +229,139 @@ export default function App() {
       {/* CONTENT (o‘zgarmagan) */}
       <div className="max-w-[420px] w-full px-4 mt-1 space-y-3">
         {/* ... bu yerda sening contenting 100% o‘sha ... */}
+            {/* CONTENT */}
+      <div className="max-w-[420px] w-full px-4 mt-1 space-y-3">
+        {/* 📂 KATEGORIYALAR VIEW → KANALLAR */}
+        {view === "categories" && (
+          <>
+            <div className="font-bold mb-2">Kanallar</div>
+            {channels.map((ch) => (
+              <div
+                key={ch.channel_ID}
+                className="bg-white rounded-2xl shadow-sm border px-5 py-3 cursor-pointer"
+                onClick={() => {
+                  setSelectedChannel(ch);
+                  setView("channel");
+                  // ✅ URL (FAKAT QO‘SHILDI)
+                  navigate("/" + encodeURIComponent(ch.Name));
+                }}
+              >
+                📢 {ch.Name}
+              </div>
+            ))}
+
+            <div className="font-bold mt-4 mb-2">Mashhur kategoriyalar</div>
+            <div className="flex flex-wrap gap-2">
+              {popularCategories.map((cat) => (
+                <div
+                  key={cat}
+                  className="px-3 py-1 bg-[#f76400] text-white rounded-full text-xs cursor-pointer"
+                  onClick={() => {
+                    setSelectedCategory(cat);
+                    setView("category");
+                    // ✅ URL (FAKAT QO‘SHILDI)
+                    if (selectedChannel?.Name) {
+                      navigate(
+                        "/" +
+                          encodeURIComponent(selectedChannel.Name) +
+                          "/" +
+                          encodeURIComponent(cat)
+                      );
+                    } else {
+                      navigate("/categories/" + encodeURIComponent(cat));
+                    }
+                  }}
+                >
+                  {cat}
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* 📄 MATERIALS — OLDINGIDAY */}
+        {(view === "home" || view === "channel" || view === "category") &&
+          (loading ? (
+            <div className="text-center py-10 text-gray-400">
+              Yuklanmoqda...
+            </div>
+          ) : visibleMaterials.length === 0 ? (
+            <div className="text-center py-10 text-gray-500">
+              Hozircha material yo‘q.
+            </div>
+          ) : (
+            visibleMaterials.map((item) => (
+              <div
+                key={item.id}
+                className="bg-white rounded-3xl shadow-sm border px-5 py-4 flex flex-col gap-3"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-start gap-3 w-full">
+                    {item.preview_url ? (
+                      <img
+                        src={item.preview_url}
+                        className="w-12 h-12 rounded-md object-cover border mt-1"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 bg-gray-300 rounded-md mt-1"></div>
+                    )}
+
+                    <div className="flex flex-col">
+                      <a
+                        className="text-sm font-semibold text-blue-700 underline cursor-pointer"
+                        onClick={() => openHandler(item.post_link)}
+                      >
+                        {item.title
+                          ? item.title.replace(/\.[^/.]+$/, "")
+                          : ""}
+                      </a>
+
+                      {item.description && (
+                        <p className="text-xs text-gray-500 line-clamp-2 max-w-[220px]">
+                          {item.description}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col items-end gap-1 min-w-[60px]">
+                    <div className="px-2 py-0.5 text-[10px] rounded-full bg-gray-100 border font-semibold text-center">
+                      {item.file_type || "—"}
+                    </div>
+
+                    <div className="px-2 py-0.5 text-[10px] rounded-full bg-gray-100 border text-gray-600 text-center">
+                      {item.size_mb ? item.size_mb + " MB" : "—"}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => openHandler(item.post_link)}
+                    className="flex items-center gap-2 px-3 py-2 rounded-full bg-blue-600 text-white text-xs font-semibold flex-1 justify-center"
+                  >
+                    <img src="/pic/icontg128.png" className="w-4 h-4" />
+                    Download
+                  </button>
+
+                  <button
+                    onClick={() => item.file_url && openHandler(item.file_url)}
+                    disabled={!item.file_url}
+                    className={
+                      "flex items-center gap-2 px-3 py-2 rounded-full text-white text-xs font-semibold flex-1 justify-center" +
+                      (item.file_url ? "" : " opacity-50 cursor-not-allowed")
+                    }
+                    style={{ backgroundColor: "#f76400" }}
+                  >
+                    <img src="/pic/icondw128.png" className="w-4 h-4" />
+                    Download
+                  </button>
+                </div>
+              </div>
+            ))
+          ))}
+      </div>
+
       </div>
 
       {/* 🔥 BOTTOM NAV — ACTIVE QILINDI */}
