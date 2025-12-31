@@ -9,7 +9,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
 
   // 🔹 NAV STATE (o‘zgarmagan mantiq)
-  const [activeTab, setActiveTab] = useState("home"); // home | categories | channel | category
+  const [view, setView] = useState("home"); // home | categories | channel | category
   const [selectedChannel, setSelectedChannel] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
@@ -372,93 +372,45 @@ export default function App() {
       </div>
 
       {/* BOTTOM NAV — FAQAT CLICK QO‘SHILDI */}
-      
       <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[92%] max-w-[420px]">
         <div className="bg-white rounded-full shadow-lg border flex justify-around py-3 px-4 items-center">
-
-          {/* HOME */}
           <div
             className="flex flex-col items-center cursor-pointer"
             onClick={() => {
               setView("home");
-              setActiveTab("home");
+              // ✅ URL (FAKAT QO‘SHILDI)
               navigate("/home");
             }}
           >
-            {activeTab === "home" ? (
-              <div className="bg-[#f76400] text-white px-5 py-2 rounded-full shadow-md flex items-center gap-1">
-                <span className="text-lg">🏠</span>
-                <span className="text-xs">{t.home}</span>
-              </div>
-            ) : (
-              <>
-                <span className="text-lg">🏠</span>
-                <span className="text-xs text-gray-600">{t.home}</span>
-              </>
-            )}
+            <div className="bg-[#f76400] text-white px-5 py-2 rounded-full shadow-md flex items-center gap-1">
+              <span className="text-lg">🏠</span>
+              <span className="text-xs">{t.home}</span>
+            </div>
           </div>
 
-          {/* CATEGORIES */}
           <div
-            className="flex flex-col items-center cursor-pointer"
+            className="text-xs text-gray-600 flex flex-col items-center cursor-pointer"
             onClick={() => {
               setView("categories");
-              setActiveTab("categories");
+              // ✅ URL (FAKAT QO‘SHILDI)
               navigate("/categories");
             }}
           >
-            {activeTab === "categories" ? (
-              <div className="bg-[#f76400] text-white px-5 py-2 rounded-full shadow-md flex items-center gap-1">
-                <span className="text-lg">📂</span>
-                <span className="text-xs">{t.categories}</span>
-              </div>
-            ) : (
-              <>
-                <span className="text-lg">📂</span>
-                <span className="text-xs text-gray-600">{t.categories}</span>
-              </>
-            )}
+            <span className="text-lg">📂</span>
+            {t.categories}
           </div>
 
-          {/* SAVED */}
-          <div
-            className="flex flex-col items-center cursor-pointer"
-            onClick={() => setActiveTab("saved")}
-          >
-            {activeTab === "saved" ? (
-              <div className="bg-[#f76400] text-white px-5 py-2 rounded-full shadow-md flex items-center gap-1">
-                <span className="text-lg">❤️</span>
-                <span className="text-xs">{t.saved}</span>
-              </div>
-            ) : (
-              <>
-                <span className="text-lg">❤️</span>
-                <span className="text-xs text-gray-600">{t.saved}</span>
-              </>
-            )}
+          <div className="text-xs text-gray-600 flex flex-col items-center">
+            <span className="text-lg">❤️</span>
+            {t.saved}
           </div>
 
-          {/* PROFILE */}
-          <div
-            className="flex flex-col items-center cursor-pointer"
-            onClick={() => setActiveTab("profile")}
-          >
-            {activeTab === "profile" ? (
-              <div className="bg-[#f76400] text-white px-5 py-2 rounded-full shadow-md flex items-center gap-1">
-                <span className="text-lg">👤</span>
-                <span className="text-xs">{t.profile}</span>
-              </div>
-            ) : (
-              <>
-                <span className="text-lg">👤</span>
-                <span className="text-xs text-gray-600">{t.profile}</span>
-              </>
-            )}
+          <div className="text-xs text-gray-600 flex flex-col items-center">
+            <span className="text-lg">👤</span>
+            {t.profile}
           </div>
-
         </div>
       </div>
-
     </div>
   );
 }
