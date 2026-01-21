@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/FaceID", "destination": "/api/FaceID" }
+  ]
+}
