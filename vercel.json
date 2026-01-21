@@ -1,5 +1,11 @@
 {
+  "version": 2,
   "rewrites": [
-    { "source": "/FaceID", "destination": "/api/FaceID" }
-  ]
+    { "source": "/FaceID", "destination": "/api/faceid" }
+  ],
+  "functions": {
+    "api/*.py": {
+      "runtime": "vercel-python@0.0.6"
+    }
+  }
 }
