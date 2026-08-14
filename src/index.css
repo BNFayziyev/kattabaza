@@ -2,25 +2,137 @@
 @tailwind components;
 @tailwind utilities;
 
-@keyframes flagWave {
-  0% {
-    transform: translateY(0) rotate(0deg) scale(1);
+/* Channel values (R G B) so Tailwind's color/opacity syntax (e.g. bg-surface/80)
+   can compose them as rgb(var(--color-x) / <alpha-value>). */
+:root {
+  --color-bg: 247 247 248;
+  --color-surface: 255 255 255;
+  --color-surface-hover: 244 244 245;
+  --color-border: 228 228 231;
+  --color-text: 24 24 27;
+  --color-text-muted: 113 113 122;
+  --color-primary: 234 88 12;
+  --color-primary-hover: 194 65 12;
+  --color-primary-soft: 255 242 232;
+  --color-on-primary: 255 255 255;
+  --color-danger: 220 38 38;
+  --color-success: 22 163 74;
+}
+
+[data-theme="dark"] {
+  --color-bg: 10 10 12;
+  --color-surface: 20 20 23;
+  --color-surface-hover: 28 28 32;
+  --color-border: 39 39 42;
+  --color-text: 244 244 245;
+  --color-text-muted: 161 161 170;
+  --color-primary: 251 146 60;
+  --color-primary-hover: 253 186 116;
+  --color-primary-soft: 35 21 10;
+  --color-on-primary: 25 16 6;
+  --color-danger: 248 113 113;
+  --color-success: 74 222 128;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: rgb(var(--color-bg));
+  color: rgb(var(--color-text));
+}
+
+* {
+  border-color: rgb(var(--color-border));
+}
+
+::selection {
+  background-color: rgb(var(--color-primary));
+  color: rgb(var(--color-on-primary));
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: rgb(var(--color-border));
+  border-radius: 999px;
+}
+
+.chip-scroll {
+  scrollbar-width: none;
+}
+.chip-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
   }
-  25% {
-    transform: translateY(-2px) rotate(2deg) scale(1.02);
-  }
-  50% {
-    transform: translateY(0) rotate(0deg) scale(1);
-  }
-  75% {
-    transform: translateY(2px) rotate(-2deg) scale(1.02);
-  }
-  100% {
-    transform: translateY(0) rotate(0deg) scale(1);
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-.flag-bg-wave {
-  animation: flagWave 3.5s ease-in-out infinite;
-  transform-origin: center;
+.animate-fade-in-up {
+  animation: fadeInUp 0.25s ease-out;
+}
+
+@keyframes mapPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(234, 88, 12, 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 14px rgba(234, 88, 12, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(234, 88, 12, 0);
+  }
+}
+
+.map-pulse-dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  animation: mapPulse 2s ease-out infinite;
+}
+
+.map-pulse-dot-core {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: rgb(var(--color-primary));
+  border: 2.5px solid #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+.leaflet-control-attribution {
+  font-size: 9px !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+  padding: 0 4px !important;
+}
+
+.map-marker-label {
+  background: rgb(var(--color-surface) / 0.85) !important;
+  backdrop-filter: blur(8px);
+  color: rgb(var(--color-text)) !important;
+  border: 1px solid rgb(var(--color-border)) !important;
+  border-radius: 999px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  padding: 3px 10px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18) !important;
+}
+
+.map-marker-label::before {
+  border-top-color: rgb(var(--color-border)) !important;
 }
