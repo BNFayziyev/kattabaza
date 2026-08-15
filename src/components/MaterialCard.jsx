@@ -48,7 +48,7 @@ export default function MaterialCard({ item, onOpen }) {
         <button
           type="button"
           onClick={() => (item.file_url ? onOpen(item.file_url) : onOpen(item.post_link))}
-          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-md bg-primary text-on-primary text-xs font-semibold hover:bg-primary-hover transition-colors"
+          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-md bg-surface/30 backdrop-blur-md border border-primary text-primary text-xs font-semibold hover:bg-primary/10 transition-colors"
         >
           Download
         </button>

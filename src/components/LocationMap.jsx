@@ -21,6 +21,7 @@ const TILE_SUBDOMAINS = {
 const ZOOM = 4;
 const TOP_OFFSET_RATIO = 0.12; // marker sits ~12% down from the top of the viewport
 const RIGHT_OFFSET_RATIO = 0.8; // marker sits ~80% across from the left of the viewport
+const FLY_DURATION = 1.4; // seconds
 
 export default function LocationMap({ latitude, longitude, label, theme }) {
   const containerRef = useRef(null);
@@ -28,6 +29,7 @@ export default function LocationMap({ latitude, longitude, label, theme }) {
   const markerRef = useRef(null);
   const tileLayerRef = useRef(null);
   const coordsRef = useRef({ latitude, longitude, label });
+  const hasCenteredRef = useRef(false);
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -40,7 +42,6 @@ export default function LocationMap({ latitude, longitude, label, theme }) {
       boxZoom: false,
       keyboard: false,
       touchZoom: false,
-      zoomAnimation: false,
       attributionControl: true,
     }).setView([20, 0], 2);
 
@@ -56,7 +57,7 @@ export default function LocationMap({ latitude, longitude, label, theme }) {
 
     mapRef.current = map;
 
-    const recenter = () => {
+    const recenter = (animate) => {
       const { latitude: lat, longitude: lon, label: lbl } = coordsRef.current;
       if (lat == null || lon == null) return;
 
@@ -67,7 +68,21 @@ export default function LocationMap({ latitude, longitude, label, theme }) {
       const shiftedPoint = targetPoint.add([offsetX, offsetY]);
       const offsetCenter = map.unproject(shiftedPoint, ZOOM);
 
-      map.setView(offsetCenter, ZOOM, { animate: false });
+      if (animate && hasCenteredRef.current) {
+        map.flyTo(offsetCenter, ZOOM, { duration: FLY_DURATION });
+        // Safety net: if the animation stalls (e.g. a backgrounded tab throttling
+        // requestAnimationFrame), snap to the target instead of staying stuck mid-flight.
+        setTimeout(() => {
+          if (!map._loaded) return;
+          const c = map.getCenter();
+          if (Math.abs(c.lat - offsetCenter.lat) > 0.01 || Math.abs(c.lng - offsetCenter.lng) > 0.01) {
+            map.setView(offsetCenter, ZOOM, { animate: false });
+          }
+        }, FLY_DURATION * 1000 + 800);
+      } else {
+        map.setView(offsetCenter, ZOOM, { animate: false });
+      }
+      hasCenteredRef.current = true;
 
       if (markerRef.current) {
         markerRef.current.setLatLng([lat, lon]);
@@ -91,12 +106,11 @@ export default function LocationMap({ latitude, longitude, label, theme }) {
       }
     };
 
-    map.on("resize", recenter);
+    map.on("resize", () => recenter(false));
     map._recenter = recenter;
-    recenter(); // in case coords already arrived before this (re)mount (e.g. React StrictMode)
+    recenter(false); // in case coords already arrived before this (re)mount (e.g. React StrictMode)
 
     return () => {
-      map.off("resize", recenter);
       map.remove();
       mapRef.current = null;
       markerRef.current = null;
@@ -114,7 +128,7 @@ export default function LocationMap({ latitude, longitude, label, theme }) {
     coordsRef.current = { latitude, longitude, label };
     const map = mapRef.current;
     if (!map || latitude == null || longitude == null || !map._recenter) return;
-    map._recenter();
+    map._recenter(true);
   }, [latitude, longitude, label]);
 
   return <div ref={containerRef} className="fixed inset-0 z-0" aria-hidden="true" />;
