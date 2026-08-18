@@ -13,6 +13,7 @@ import LocationMap from "./components/LocationMap";
 import SearchBar from "./components/SearchBar";
 import MaterialsGrid from "./components/MaterialsGrid";
 import ChannelsCategoriesView from "./components/ChannelsCategoriesView";
+import CheckerPanel from "./components/CheckerPanel";
 
 function initialTheme() {
   if (typeof window === "undefined") return "light";
@@ -34,7 +35,7 @@ export default function App() {
   const [keysOpen, setKeysOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const [view, setView] = useState("home"); // home | categories | channel | category
+  const [view, setView] = useState("home"); // home | categories | channel | category | checker
   const [selectedChannel, setSelectedChannel] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [activeTab, setActiveTab] = useState("home");
@@ -53,15 +54,27 @@ export default function App() {
     window.localStorage.setItem("kb-lang", lang);
   }, [lang]);
 
-  const { materials, channels, dbRows, loading } = useCatalogData();
+  const { materials, channels, loading } = useCatalogData();
   const ipInfo = useIpInfo();
 
   // URL -> STATE sync
   useEffect(() => {
-    if (!channels || channels.length === 0) return;
-
     const raw = (location.pathname || "/").replace(/^\/+|\/+$/g, "");
     const parts = raw ? raw.split("/") : [];
+
+    // ⚠️ Tekshiruv sahifasi kanallarga BOG'LIQ EMAS — shuning uchun u
+    // quyidagi "kanallar yuklanmagan" tekshiruvidan OLDIN turadi.
+    // Aks holda kattabaza.uz/checker ni to'g'ridan-to'g'ri ochganda
+    // (yoki sahifani yangilaganda) bo'sh ekran chiqardi.
+    if (parts[0] === "checker") {
+      setView("checker");
+      setActiveTab("checker");
+      setSelectedChannel(null);
+      setSelectedCategory(null);
+      return;
+    }
+
+    if (!channels || channels.length === 0) return;
 
     if (parts.length === 0 || parts[0] === "home") {
       setView("home");
@@ -129,6 +142,12 @@ export default function App() {
       setView("categories");
       setActiveTab("categories");
       navigate("/categories");
+      return;
+    }
+    if (tab === "checker") {
+      setView("checker");
+      setActiveTab("checker");
+      navigate("/checker");
       return;
     }
     setActiveTab(tab);
@@ -212,7 +231,11 @@ export default function App() {
 
       <main className="relative z-10 flex-1 w-full max-w-6xl mx-auto px-4 md:px-6 py-6 flex flex-col gap-5">
         <ConnectionCard t={t} ipInfo={ipInfo} copiedIp={copiedIp} onCopy={copyText} />
-        <SearchBar value={searchQuery} onChange={setSearchQuery} placeholder={t.search} />
+        {view !== "checker" && (
+          <SearchBar value={searchQuery} onChange={setSearchQuery} placeholder={t.search} />
+        )}
+
+        {view === "checker" && <CheckerPanel lang={lang} />}
 
         {view === "categories" && (
           <ChannelsCategoriesView
@@ -238,7 +261,7 @@ export default function App() {
 
       <Footer t={t} />
 
-      <KeysModal open={keysOpen} onClose={() => setKeysOpen(false)} t={t} dbRows={dbRows} />
+      <KeysModal open={keysOpen} onClose={() => setKeysOpen(false)} t={t} />
     </div>
   );
 }

@@ -48,6 +48,12 @@ function SidebarContent({
             icon="📂"
             label={t.categories}
           />
+          <NavItem
+            active={activeTab === "checker"}
+            onClick={() => onNavigate("checker")}
+            icon="🛡️"
+            label={t.checker}
+          />
         </div>
 
         {channels.length > 0 && (

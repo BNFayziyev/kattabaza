@@ -1,0 +1,36 @@
+# ⚠️ Sirlar — hech qachon git'ga tushmasin
+.env
+.env.*
+!.env.example
+*.session
+*.session-journal
+*.pem
+*.key
+service-account*.json
+
+# Node
+node_modules/
+dist/
+dist-ssr/
+.vite/
+*.local
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Muhit / IDE
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Loglar va vaqtinchalik
+*.log
+npm-debug.log*
+tmp/
+downloads/
