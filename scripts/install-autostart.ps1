@@ -54,9 +54,9 @@ Register-ScheduledTask `
 Write-Host ""
 Write-Host "Tayyor. '$taskName' vazifasi ro'yxatdan o'tdi." -ForegroundColor Green
 
-$busy = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue
+$busy = Get-NetTCPConnection -LocalPort 8090 -State Listen -ErrorAction SilentlyContinue
 if ($busy) {
-  Write-Host "3000-port band - avval qo'lda ochilgan serverni yoping, keyin:" -ForegroundColor Yellow
+  Write-Host "8090-port band - avval qo'lda ochilgan serverni yoping, keyin:" -ForegroundColor Yellow
   Write-Host "  Start-ScheduledTask -TaskName $taskName"
 } else {
   Start-ScheduledTask -TaskName $taskName
@@ -67,4 +67,4 @@ Write-Host "Log:                   data\server.log"
 Write-Host "Qayta ishga tushirish: Stop-ScheduledTask -TaskName $taskName; Start-ScheduledTask -TaskName $taskName"
 Write-Host "O'chirish:             scripts\uninstall-autostart.ps1"
 Write-Host ""
-Write-Host "Sayt: http://localhost:3000"
+Write-Host "Sayt: http://localhost:8090"

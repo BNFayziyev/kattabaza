@@ -18,7 +18,7 @@ if (!env.SECRET_KEY) {
 }
 
 export const config = {
-  port: Number(env.PORT) || 3000,
+  port: Number(env.PORT) || 8090,
   // cloudflared shu kompyuterda ishlaydi, shuning uchun tashqariga ochish shart emas
   host: env.HOST || "127.0.0.1",
   distDir: path.join(ROOT, "dist"),

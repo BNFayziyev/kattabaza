@@ -4,7 +4,7 @@ Dasturlar, VPN va servislar markazi — `kattabaza.uz`.
 Sayt shu kompyuterda ishlaydi, internetga **Cloudflare Tunnel** orqali chiqadi.
 
 ```
-Brauzer ──► Cloudflare ──► cloudflared (shu kompyuter) ──► http://127.0.0.1:3000 (server/index.js)
+Brauzer ──► Cloudflare ──► cloudflared (shu kompyuter) ──► http://127.0.0.1:8090 (server/index.js)
                                                               ├─ dist/   — sayt (React + Vite)
                                                               └─ /api/*  — katalog, IP qidiruv, kalitlar
 ```
@@ -32,7 +32,7 @@ Node.js 22+ kerak.
 ```powershell
 npm install
 npm run build      # saytni yig'ish -> dist/
-npm start          # server: http://localhost:3000
+npm start          # server: http://localhost:8090
 ```
 
 Ishlab chiqish rejimi: `npm run dev` → http://localhost:5173 (API server bilan birga).
@@ -106,7 +106,7 @@ Hozir `kattabaza.uz` DNS'i **ahost.uz** da, sayt esa **Vercel** da. Bu kompyuter
    `kattabaza.uz` va `www` ning Vercel yozuvlarini o'chiring.
 2. **ahost.uz** panelida nameserver'larni Cloudflare bergan ikkita NS ga almashtiring.
 3. Cloudflare → *Zero Trust* → *Networks* → *Tunnels* → shu kompyuterdagi tunnel →
-   *Public Hostname* → `kattabaza.uz` va `www.kattabaza.uz` → `HTTP` `localhost:3000`.
+   *Public Hostname* → `kattabaza.uz` va `www.kattabaza.uz` → `HTTP` `localhost:8090`.
 4. Tekshirish: `https://kattabaza.uz/api/health` → `{"ok":true}`.
 
 Ko'chishdan keyin: Vercel loyihasini o'chiring va `.env` da `KEYS_PASSWORD_OFFSET_MIN` ni
