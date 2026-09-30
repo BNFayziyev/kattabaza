@@ -13,7 +13,7 @@ Supabase, userbot va migratsiya bo'yicha qo'llanma — [SETUP.md](SETUP.md).
 
 ## Bosh sahifa
 
-- Orqa fonda Leaflet xaritasi — foydalanuvchi joylashuvida pulsli belgi.
+- Orqa fonda o'zimiz chizgan xarita (Leaflet) — foydalanuvchi joylashuvida pulsli belgi.
 - "Your connection" kartasi (bayroq, IPv4/IPv6, provayder, ⓘ — barcha ma'lumot).
 - **IP qidiruv** — istalgan IP yoki domen: joylashuv, vaqt zonasi, ISP, ASN, rDNS va h.k.;
   topilgan joyga orqa fondagi xarita uchib boradi.
@@ -62,12 +62,32 @@ Olib tashlash: `scripts\uninstall-autostart.ps1`.
 
 ## Karusel rasmlari
 
-`tools/slides/slides.html` — slaydlar manbasi. O'zgartirgandan keyin:
+Time va Treyler rasmlari **haqiqiy platformalardan** olinadi: `tools/slides/capture.mjs`
+ularning yig'ilgan frontendini ochadi, `/api` so'rovlariga demo ma'lumot qaytaradi
+(haqiqiy serverlar va ma'lumotlarga tegilmaydi) va har sahifani kunduzgi/tungi mavzuda
+suratga oladi. Med uchun "tez orada" slaydlari — `tools/slides/slides.html`.
 
 ```powershell
-npm run slides     # -> public/slides/*.png (Chrome yoki Edge kerak)
+npm run slides          # hammasi  (yoki: npm run slides -- treyler | time | med)
 npm run build
 ```
+
+Natija: `public/slides/<id>-light.jpg` va `<id>-dark.jpg` — sayt mavzusiga qarab tanlanadi.
+Kerak: Chrome yoki Edge, `C:\treyler\web\dist` va `C:\faceID_manager\frontend`
+(boshqa joyda bo'lsa: `TREYLER_DIST`, `FACEID_SRC` muhit o'zgaruvchilari).
+
+## Orqa fon xaritasi
+
+Xarita o'zimizniki — `public/map/world-light.svg` va `world-dark.svg`, Natural Earth
+(jamoat mulki) ma'lumotidan chizilgan. Sayt hech qanday tashqi xarita servisiga
+(OSM, CARTO, Esri) so'rov yubormaydi. Qayta chizish:
+
+```powershell
+npm run map
+```
+
+Refresh bosilganda yoki IP qidirilganda xaritada samolyot eski joydan yangisiga uchadi
+(joy o'zgarmagan bo'lsa — belgi atrofida aylanib qo'nadi): `src/components/LocationMap.jsx`.
 
 ## Cloudflare orqali domenga ulash
 
@@ -104,8 +124,10 @@ src/
                    ServiceBlock, Carousel, AssistantPanel, KeysPanel, CheckerPanel, ...
   hooks/           useCatalogData, useIpInfo
   lib/             i18n, site (servislar), checker, supabase
-public/slides/     karusel rasmlari
+public/slides/     karusel rasmlari (oq va qora)
+public/map/        orqa fon xaritasi (oq va qora)
 scripts/           dev.js, start.cmd, install-autostart.ps1
-tools/slides/      slaydlar manbasi va PNG ga aylantirish
+tools/slides/      platformalardan rasm olish (capture.mjs) va Med slaydlari
+tools/map/         xaritani chizish (build-map.mjs)
 bot/, db/          userbot va Supabase sxemasi (SETUP.md)
 ```

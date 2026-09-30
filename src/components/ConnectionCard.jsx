@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { countryFlagUrl, getCountryName } from "../lib/helpers";
+import Icon from "./Icon";
 import IpDetailsModal from "./IpDetailsModal";
 
 const FLAG_MASK =
   "linear-gradient(to right, black 0%, black 30%, transparent 82%)";
 
-export default function ConnectionCard({ t, ipInfo, copiedIp, onCopy }) {
+export default function ConnectionCard({ t, ipInfo, copiedIp, onCopy, onRefresh }) {
   const [detailsOpen, setDetailsOpen] = useState(false);
 
   const locationLabel =
@@ -51,7 +52,7 @@ export default function ConnectionCard({ t, ipInfo, copiedIp, onCopy }) {
               title={t.ipDetails}
               aria-label={t.ipDetails}
             >
-              i
+              <Icon name="info" size={14} strokeWidth={2} />
             </button>
           </div>
 
@@ -69,19 +70,19 @@ export default function ConnectionCard({ t, ipInfo, copiedIp, onCopy }) {
               title={t.copy}
               className="shrink-0 w-9 h-9 rounded-md bg-surface border border-line shadow-sm hover:bg-surface-hover text-text text-base flex items-center justify-center transition-colors"
             >
-              {copiedIp === "main" ? "✓" : "⧉"}
+              <Icon name={copiedIp === "main" ? "check" : "copy"} size={17} />
             </button>
             <button
               type="button"
               onClick={(e) => {
                 stop(e);
-                ipInfo.refresh();
+                (onRefresh || ipInfo.refresh)();
               }}
               aria-label={t.refresh}
               title={t.refresh}
               className="shrink-0 w-9 h-9 rounded-md bg-primary text-on-primary shadow-sm hover:bg-primary-hover text-base flex items-center justify-center transition-colors"
             >
-              ↻
+              <Icon name="refresh" size={17} strokeWidth={2} className={ipInfo.loading ? "icon-spin" : ""} />
             </button>
           </div>
 

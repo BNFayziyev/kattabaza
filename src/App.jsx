@@ -42,6 +42,8 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState("");
   // IP qidiruvda topilgan joy — orqa fondagi xarita shu yerga uchadi
   const [lookupFocus, setLookupFocus] = useState(null);
+  // Har oshganda xaritada samolyot uchadi (refresh yoki qidiruv bosilganda)
+  const [flightId, setFlightId] = useState(0);
 
   const [view, setView] = useState("home"); // home | apps | categories | channel | category | checker
   const [selectedChannel, setSelectedChannel] = useState(null);
@@ -238,6 +240,7 @@ export default function App() {
         longitude={mapTarget.longitude}
         label={mapTarget.label}
         theme={theme}
+        flightId={flightId}
       />
 
       <Sidebar
@@ -255,8 +258,26 @@ export default function App() {
       />
 
       <main className="relative z-10 flex-1 w-full max-w-6xl mx-auto px-4 md:px-6 py-6 flex flex-col gap-5">
-        <ConnectionCard t={t} ipInfo={ipInfo} copiedIp={copiedIp} onCopy={copyText} />
-        <IpLookup t={t} onLocate={setLookupFocus} />
+        <ConnectionCard
+          t={t}
+          ipInfo={ipInfo}
+          copiedIp={copiedIp}
+          onCopy={copyText}
+          onRefresh={() => {
+            setLookupFocus(null);
+            setFlightId((n) => n + 1);
+            ipInfo.refresh();
+          }}
+        />
+        <IpLookup
+          t={t}
+          onLocate={(target) => {
+            // Xato bo'lganda (joy topilmadi) samolyot bekorga uchmasin
+            if (!target && !lookupFocus) return;
+            setLookupFocus(target);
+            setFlightId((n) => n + 1);
+          }}
+        />
         {view !== "checker" && (
           <SearchBar value={searchQuery} onChange={setSearchQuery} placeholder={t.search} />
         )}
@@ -274,7 +295,7 @@ export default function App() {
               onSelectCategory={(cat) => handleSelectCategory(cat, null)}
             />
             {homeServices.map((s) => (
-              <ServiceBlock key={s.id} t={t} service={s} />
+              <ServiceBlock key={s.id} t={t} service={s} theme={theme} />
             ))}
           </div>
         )}

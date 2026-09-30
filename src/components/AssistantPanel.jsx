@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ASSISTANT_USERNAME, telegramChatUrl } from "../lib/site";
+import Icon from "./Icon";
 
 /**
  * AI yordamchi. Hozircha xabar Telegramda (@synapse_bo1) ochiladi va
@@ -22,8 +23,8 @@ function PanelContent({ t, onClose }) {
   return (
     <div className="flex flex-col h-full">
       <div className="flex items-center gap-2.5 px-4 h-16 shrink-0 border-b border-line">
-        <span className="relative w-8 h-8 rounded-md bg-primary text-on-primary flex items-center justify-center text-sm shrink-0">
-          ✦
+        <span className="relative w-8 h-8 rounded-md bg-primary text-on-primary flex items-center justify-center shrink-0">
+          <Icon name="sparkles" size={17} />
           <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-success border-2 border-surface" />
         </span>
         <div className="min-w-0 flex-1">
@@ -53,7 +54,10 @@ function PanelContent({ t, onClose }) {
             <div className="max-w-[88%] rounded-lg rounded-br-sm bg-primary text-on-primary px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap break-words">
               {message}
             </div>
-            <span className="text-[11px] text-muted">✓ {t.aiSent}</span>
+            <span className="inline-flex items-center gap-1 text-[11px] text-muted">
+              <Icon name="check" size={12} strokeWidth={2.2} />
+              {t.aiSent}
+            </span>
           </div>
         ))}
       </div>
@@ -96,9 +100,9 @@ function PanelContent({ t, onClose }) {
             type="submit"
             disabled={!text.trim()}
             aria-label={t.aiSend}
-            className="h-9 px-3 rounded-md text-sm font-semibold bg-primary text-on-primary hover:bg-primary-hover transition-colors disabled:opacity-50"
+            className="h-9 px-3 rounded-md bg-primary text-on-primary hover:bg-primary-hover transition-colors disabled:opacity-50 flex items-center"
           >
-            ➤
+            <Icon name="send" size={17} />
           </button>
         </form>
         <p className="text-[11px] text-muted leading-snug px-0.5">{t.aiNote}</p>
@@ -128,7 +132,7 @@ export default function AssistantPanel({ t }) {
         onClick={() => setOpen(true)}
         className="xl:hidden fixed bottom-4 right-4 z-40 flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary text-on-primary text-sm font-semibold shadow-popover hover:bg-primary-hover transition-colors"
       >
-        <span aria-hidden="true">✦</span>
+        <Icon name="sparkles" size={17} />
         {t.aiAsk}
       </button>
 

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import Icon from "./Icon";
 
 const reducedMotion = () =>
   typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
@@ -75,17 +76,17 @@ export default function Carousel({ slides, label, interval = 5000 }) {
               type="button"
               onClick={() => go(index - 1)}
               aria-label="Previous"
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/45 backdrop-blur-md text-white text-lg leading-none flex items-center justify-center opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity [@media(hover:none)]:opacity-80"
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/45 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity [@media(hover:none)]:opacity-80"
             >
-              ‹
+              <Icon name="chevronLeft" size={18} strokeWidth={2.2} />
             </button>
             <button
               type="button"
               onClick={() => go(index + 1)}
               aria-label="Next"
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/45 backdrop-blur-md text-white text-lg leading-none flex items-center justify-center opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity [@media(hover:none)]:opacity-80"
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/45 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity [@media(hover:none)]:opacity-80"
             >
-              ›
+              <Icon name="chevronRight" size={18} strokeWidth={2.2} />
             </button>
             <div className="absolute inset-x-0 bottom-2 flex justify-center gap-1.5">
               {slides.map((s, i) => (

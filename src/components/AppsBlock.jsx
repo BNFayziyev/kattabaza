@@ -1,4 +1,5 @@
 import { getFileType } from "../lib/helpers";
+import Icon from "./Icon";
 
 const PREVIEW_COUNT = 6;
 
@@ -32,9 +33,9 @@ function AppRow({ item, onOpen }) {
           onClick={() => (item.file_url ? onOpen(item.file_url) : onOpen(item.post_link))}
           aria-label={`Download ${title}`}
           title="Download"
-          className="w-8 h-8 rounded-md border border-primary text-primary text-sm flex items-center justify-center hover:bg-primary/10 transition-colors"
+          className="w-8 h-8 rounded-md border border-primary text-primary flex items-center justify-center hover:bg-primary/10 transition-colors"
         >
-          ↓
+          <Icon name="download" size={15} strokeWidth={2} />
         </button>
         {item.file_url && (
           <button
@@ -59,8 +60,8 @@ export default function AppsBlock({ t, materials, loading, popularCategories, on
   return (
     <section className="min-w-0 h-full rounded-lg border border-line bg-surface/30 backdrop-blur-md hover:border-primary/40 transition-colors p-4 flex flex-col gap-3">
       <div className="flex items-center gap-3">
-        <span className="w-9 h-9 rounded-md bg-primary-soft text-primary flex items-center justify-center text-base shrink-0">
-          📦
+        <span className="w-9 h-9 rounded-md bg-primary-soft text-primary flex items-center justify-center shrink-0">
+          <Icon name="box" size={18} />
         </span>
         <div className="min-w-0 flex-1">
           <h2 className="text-sm font-bold text-text">{t.apps}</h2>
@@ -71,9 +72,10 @@ export default function AppsBlock({ t, materials, loading, popularCategories, on
         <button
           type="button"
           onClick={onViewAll}
-          className="shrink-0 px-2.5 py-1 rounded-md text-xs font-semibold text-primary hover:bg-primary/10 transition-colors"
+          className="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold text-primary hover:bg-primary/10 transition-colors"
         >
-          {t.viewAll} →
+          {t.viewAll}
+          <Icon name="arrowRight" size={14} />
         </button>
       </div>
 

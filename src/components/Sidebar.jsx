@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { LANGS } from "../lib/i18n";
 import { SERVICES, serviceUrl } from "../lib/site";
+import Icon from "./Icon";
 
 function NavItem({ active, onClick, icon, label }) {
   return (
@@ -11,7 +12,7 @@ function NavItem({ active, onClick, icon, label }) {
         active ? "bg-primary-soft text-primary" : "text-muted hover:text-text hover:bg-surface-hover"
       }`}
     >
-      <span aria-hidden="true" className="w-4 text-center">{icon}</span>
+      <Icon name={icon} />
       <span className="truncate">{label}</span>
     </button>
   );
@@ -43,17 +44,17 @@ function SidebarContent({
 
       <div className="flex-1 overflow-auto scrollbar-thin px-2 py-3 flex flex-col gap-4">
         <div className="flex flex-col gap-0.5">
-          <NavItem active={activeTab === "home"} onClick={() => onNavigate("home")} icon="🏠" label={t.home} />
+          <NavItem active={activeTab === "home"} onClick={() => onNavigate("home")} icon="home" label={t.home} />
           <NavItem
             active={activeTab === "categories"}
             onClick={() => onNavigate("categories")}
-            icon="📂"
+            icon="folder"
             label={t.categories}
           />
           <NavItem
             active={activeTab === "checker"}
             onClick={() => onNavigate("checker")}
-            icon="🛡️"
+            icon="shield"
             label={t.checker}
           />
         </div>
@@ -69,7 +70,7 @@ function SidebarContent({
                   key={ch.channel_ID}
                   active={selectedChannel?.channel_ID === ch.channel_ID}
                   onClick={() => onSelectChannel(ch)}
-                  icon="📢"
+                  icon="megaphone"
                   label={ch.Name}
                 />
               ))}
@@ -91,9 +92,9 @@ function SidebarContent({
                   rel="noreferrer"
                   className="w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-sm font-medium transition-colors text-muted hover:text-text hover:bg-surface-hover"
                 >
-                  <span aria-hidden="true" className="w-4 text-center">{s.icon}</span>
+                  <Icon name={s.icon} />
                   <span className="truncate flex-1">{t.svc[s.id].name}</span>
-                  <span aria-hidden="true" className="text-[11px]">↗</span>
+                  <Icon name="external" size={13} />
                 </a>
               ) : (
                 <div
@@ -101,7 +102,7 @@ function SidebarContent({
                   aria-disabled="true"
                   className="w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-sm font-medium text-muted/70 cursor-default"
                 >
-                  <span aria-hidden="true" className="w-4 text-center opacity-70">{s.icon}</span>
+                  <Icon name={s.icon} className="opacity-70" />
                   <span className="truncate flex-1">{t.svc[s.id].name}</span>
                   <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-surface-hover border border-line">
                     {t.soon}
@@ -114,14 +115,14 @@ function SidebarContent({
       </div>
 
       <div className="shrink-0 border-t border-line p-2 flex flex-col gap-2">
-        <NavItem onClick={onOpenKeys} icon="🔑" label={t.contactPanel} />
+        <NavItem onClick={onOpenKeys} icon="key" label={t.contactPanel} />
         <div className="flex items-center gap-1.5 px-1">
           <button
             type="button"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             className="flex-1 h-8 rounded-md bg-surface-hover text-text text-sm flex items-center justify-center hover:bg-line/60 transition-colors"
           >
-            {theme === "dark" ? "🌙" : "☀️"}
+            <Icon name={theme === "dark" ? "moon" : "sun"} />
           </button>
           {LANGS.map((code) => (
             <button
@@ -167,7 +168,7 @@ export default function Sidebar(props) {
             aria-label={t.contactPanel}
             className="w-8 h-8 rounded-md flex items-center justify-center bg-surface-hover text-sm"
           >
-            🔑
+            <Icon name="key" />
           </button>
           <button
             type="button"
@@ -176,7 +177,7 @@ export default function Sidebar(props) {
             aria-expanded={mobileOpen}
             className="w-8 h-8 rounded-md flex items-center justify-center bg-surface-hover text-sm"
           >
-            ☰
+            <Icon name="menu" size={18} />
           </button>
         </div>
       </header>

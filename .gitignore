@@ -35,3 +35,4 @@ data/
 npm-debug.log*
 tmp/
 downloads/
+tools/map/data/

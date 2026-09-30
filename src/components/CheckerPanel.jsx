@@ -6,6 +6,7 @@ import {
   checkEmailSyntax,
 } from "../lib/checker";
 import { getCheckerText, renderNote } from "../lib/checkerI18n";
+import Icon from "./Icon";
 
 const LEVEL_STYLE = {
   good: "text-success",
@@ -13,13 +14,13 @@ const LEVEL_STYLE = {
   warn: "text-primary",
   error: "text-danger",
 };
-const LEVEL_ICON = { good: "✓", info: "·", warn: "!", error: "✕" };
+const LEVEL_ICON = { good: "check", info: "dot", warn: "alert", error: "x" };
 
 function Note({ note, tc }) {
   return (
     <li className="flex items-start gap-2 text-sm">
-      <span className={`font-bold shrink-0 w-4 text-center ${LEVEL_STYLE[note.level] || "text-muted"}`}>
-        {LEVEL_ICON[note.level] || "·"}
+      <span className={`shrink-0 w-4 mt-0.5 flex justify-center ${LEVEL_STYLE[note.level] || "text-muted"}`}>
+        <Icon name={LEVEL_ICON[note.level] || "dot"} size={15} strokeWidth={2.2} />
       </span>
       <span className="text-text break-words">{renderNote(note, tc)}</span>
     </li>
@@ -96,9 +97,9 @@ export default function CheckerPanel({ lang = "en" }) {
   const [result, setResult] = useState(null);
 
   const tabs = [
-    { key: "url", icon: "🔗", label: tc.tabUrl, ph: tc.phUrl },
-    { key: "email", icon: "✉️", label: tc.tabEmail, ph: tc.phEmail },
-    { key: "domain", icon: "🌐", label: tc.tabDomain, ph: tc.phDomain },
+    { key: "url", icon: "link", label: tc.tabUrl, ph: tc.phUrl },
+    { key: "email", icon: "mail", label: tc.tabEmail, ph: tc.phEmail },
+    { key: "domain", icon: "globe", label: tc.tabDomain, ph: tc.phDomain },
   ];
   const active = tabs.find((x) => x.key === tab);
 
@@ -141,11 +142,11 @@ export default function CheckerPanel({ lang = "en" }) {
             key={x.key}
             type="button"
             onClick={() => switchTab(x.key)}
-            className={`px-3 py-1.5 rounded-md text-sm font-semibold transition-colors ${
+            className={`px-3 py-1.5 rounded-md text-sm font-semibold transition-colors inline-flex items-center gap-1.5 ${
               tab === x.key ? "bg-primary text-on-primary" : "bg-surface-hover text-muted hover:text-text"
             }`}
           >
-            <span className="mr-1.5" aria-hidden="true">{x.icon}</span>
+            <Icon name={x.icon} size={15} />
             {x.label}
           </button>
         ))}

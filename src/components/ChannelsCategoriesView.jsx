@@ -1,3 +1,5 @@
+import Icon from "./Icon";
+
 export default function ChannelsCategoriesView({
   t,
   channels,
@@ -18,8 +20,8 @@ export default function ChannelsCategoriesView({
               onClick={() => onSelectChannel(ch)}
               className="text-left rounded-lg border border-line bg-surface/30 backdrop-blur-md hover:border-primary/40 transition-colors px-4 py-3.5 flex items-center gap-3"
             >
-              <span className="w-8 h-8 rounded-md bg-primary-soft text-primary flex items-center justify-center text-sm shrink-0">
-                📢
+              <span className="w-8 h-8 rounded-md bg-primary-soft text-primary flex items-center justify-center shrink-0">
+                <Icon name="megaphone" />
               </span>
               <span className="text-sm font-semibold text-text truncate">{ch.Name}</span>
             </button>

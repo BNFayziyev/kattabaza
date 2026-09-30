@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { countryFlagUrl } from "../lib/helpers";
+import Icon from "./Icon";
 
 function localTime(tz) {
   if (!tz) return "";
@@ -93,7 +94,7 @@ export default function IpLookup({ t, onLocate }) {
         }}
         className="flex items-center gap-2 bg-surface border border-line rounded-md pl-4 pr-1.5 py-1.5 focus-within:ring-2 focus-within:ring-primary/30 transition-shadow"
       >
-        <span className="text-muted" aria-hidden="true">🌐</span>
+        <Icon name="globe" className="text-muted" />
         <input
           type="text"
           value={query}
@@ -110,9 +111,10 @@ export default function IpLookup({ t, onLocate }) {
         <button
           type="submit"
           disabled={busy || !query.trim()}
-          className="shrink-0 px-3 py-1.5 rounded-md text-sm font-semibold bg-primary text-on-primary hover:bg-primary-hover transition-colors disabled:opacity-50"
+          className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-semibold bg-primary text-on-primary hover:bg-primary-hover transition-colors disabled:opacity-50"
         >
-          {busy ? "…" : t.lookupButton}
+          <Icon name={busy ? "refresh" : "search"} size={15} strokeWidth={2} className={busy ? "icon-spin" : ""} />
+          <span className="hidden sm:inline">{t.lookupButton}</span>
         </button>
       </form>
 
@@ -130,8 +132,8 @@ export default function IpLookup({ t, onLocate }) {
                 {data.reserved ? t.lookupReserved : [data.city, data.region, data.country].filter(Boolean).join(", ")}
               </div>
             </div>
-            <button type="button" className="text-sm text-muted px-2 py-1 rounded-md hover:bg-surface-hover" onClick={close}>
-              {t.close}
+            <button type="button" className="text-sm text-muted p-1.5 rounded-md hover:bg-surface-hover hover:text-text" onClick={close} aria-label={t.close} title={t.close}>
+              <Icon name="x" />
             </button>
           </div>
           {!data.reserved && (
