@@ -14,6 +14,12 @@ import SearchBar from "./components/SearchBar";
 import MaterialsGrid from "./components/MaterialsGrid";
 import ChannelsCategoriesView from "./components/ChannelsCategoriesView";
 import CheckerPanel from "./components/CheckerPanel";
+import IpLookup from "./components/IpLookup";
+import AppsBlock from "./components/AppsBlock";
+import ServiceBlock from "./components/ServiceBlock";
+import AssistantPanel from "./components/AssistantPanel";
+import { LANGS } from "./lib/i18n";
+import { SERVICES } from "./lib/site";
 
 function initialTheme() {
   if (typeof window === "undefined") return "light";
@@ -25,7 +31,7 @@ function initialTheme() {
 function initialLang() {
   if (typeof window === "undefined") return "en";
   const stored = window.localStorage.getItem("kb-lang");
-  return stored === "ru" ? "ru" : "en";
+  return LANGS.includes(stored) ? stored : "en";
 }
 
 export default function App() {
@@ -34,8 +40,10 @@ export default function App() {
   const [copiedIp, setCopiedIp] = useState("");
   const [keysOpen, setKeysOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  // IP qidiruvda topilgan joy — orqa fondagi xarita shu yerga uchadi
+  const [lookupFocus, setLookupFocus] = useState(null);
 
-  const [view, setView] = useState("home"); // home | categories | channel | category | checker
+  const [view, setView] = useState("home"); // home | apps | categories | channel | category | checker
   const [selectedChannel, setSelectedChannel] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [activeTab, setActiveTab] = useState("home");
@@ -69,6 +77,15 @@ export default function App() {
     if (parts[0] === "checker") {
       setView("checker");
       setActiveTab("checker");
+      setSelectedChannel(null);
+      setSelectedCategory(null);
+      return;
+    }
+
+    // Barcha ilovalar ro'yxati ham kanallarga bog'liq emas
+    if (parts[0] === "apps") {
+      setView("apps");
+      setActiveTab("home");
       setSelectedChannel(null);
       setSelectedCategory(null);
       return;
@@ -206,12 +223,20 @@ export default function App() {
     return list;
   }, [materials, view, selectedChannel, selectedCategory, searchQuery]);
 
+  const homeServices = SERVICES.filter((s) => s.home);
+  const showBlocks = view === "home" && !searchQuery.trim();
+  const mapTarget = lookupFocus || {
+    latitude: ipInfo.latitude,
+    longitude: ipInfo.longitude,
+    label: ipInfo.city || ipInfo.region,
+  };
+
   return (
-    <div className="min-h-screen flex flex-col text-text transition-colors lg:pl-64">
+    <div className="min-h-screen flex flex-col text-text transition-colors lg:pl-64 xl:pr-80">
       <LocationMap
-        latitude={ipInfo.latitude}
-        longitude={ipInfo.longitude}
-        label={ipInfo.city || ipInfo.region}
+        latitude={mapTarget.latitude}
+        longitude={mapTarget.longitude}
+        label={mapTarget.label}
         theme={theme}
       />
 
@@ -231,8 +256,27 @@ export default function App() {
 
       <main className="relative z-10 flex-1 w-full max-w-6xl mx-auto px-4 md:px-6 py-6 flex flex-col gap-5">
         <ConnectionCard t={t} ipInfo={ipInfo} copiedIp={copiedIp} onCopy={copyText} />
+        <IpLookup t={t} onLocate={setLookupFocus} />
         {view !== "checker" && (
           <SearchBar value={searchQuery} onChange={setSearchQuery} placeholder={t.search} />
+        )}
+
+        {/* Bosh sahifa: 2 ustunli bloklar (kichik ekranda 1 ustun) */}
+        {showBlocks && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <AppsBlock
+              t={t}
+              materials={materials}
+              loading={loading}
+              popularCategories={popularCategories}
+              onOpen={openHandler}
+              onViewAll={() => navigate("/apps")}
+              onSelectCategory={(cat) => handleSelectCategory(cat, null)}
+            />
+            {homeServices.map((s) => (
+              <ServiceBlock key={s.id} t={t} service={s} />
+            ))}
+          </div>
         )}
 
         {view === "checker" && <CheckerPanel lang={lang} />}
@@ -248,7 +292,7 @@ export default function App() {
           />
         )}
 
-        {(view === "home" || view === "channel" || view === "category") && (
+        {((view === "home" && !showBlocks) || view === "apps" || view === "channel" || view === "category") && (
           <MaterialsGrid
             t={t}
             materials={visibleMaterials}
@@ -262,6 +306,8 @@ export default function App() {
       <Footer t={t} />
 
       <KeysModal open={keysOpen} onClose={() => setKeysOpen(false)} t={t} />
+
+      <AssistantPanel t={t} />
     </div>
   );
 }

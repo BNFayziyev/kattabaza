@@ -5,54 +5,26 @@ import { supabase } from "../lib/supabase";
  * Catalog data source.
  *
  * VITE_DATA_SOURCE:
- *   "sheet"    — Google Sheets only            (default for now)
+ *   "sheet"    — Google Sheets, lokal server orqali (/api/catalog)  (default for now)
  *   "supabase" — Supabase only
  *   "auto"     — try Supabase, fall back to the Sheet if it returns nothing
  *
- * ⚠️ TEMPORARY: the Sheet path is here only until the bot fills the database.
- * To remove it later, delete `loadFromSheet` and this comment, then set
- * VITE_DATA_SOURCE=supabase.
+ * Sheet endi brauzerdan to'g'ridan-to'g'ri o'qilmaydi: server/sheets.js uni
+ * keshlab, faqat kerakli maydonlarni beradi — Sheet ID brauzerga tushmaydi,
+ * opensheet ishlamay qolsa oxirgi nusxa ko'rsatiladi.
  *
- * ⚠️ KEYS ARE NOT READ FROM THE SHEET. The VLESS configs used to be loaded
- * into the browser from the public sheet before any password check, which made
- * them world-readable. They now live in Postgres behind `unlock_keys()`.
- * Do not re-add them here.
+ * ⚠️ KEYS ARE NOT READ HERE. They come only from POST /api/keys/unlock after
+ * the password is checked on the server. Do not re-add them here.
  */
 
 const SOURCE = import.meta.env.VITE_DATA_SOURCE || "sheet";
 
-const SHEET_ID =
-  import.meta.env.VITE_SHEET_ID || "1z7O8Xlq5WN3VRv45lEyTu4QpW6O3tEcefsg5O5y1y5g";
-const SHEET_BASE = `https://opensheet.elk.sh/${SHEET_ID}`;
-
-const splitList = (v) =>
-  v ? String(v).split(",").map((s) => s.trim()).filter(Boolean) : [];
-
-async function fetchTab(tab) {
-  try {
-    const res = await fetch(`${SHEET_BASE}/${encodeURIComponent(tab)}`);
-    if (!res.ok) return [];
-    const data = await res.json();
-    return Array.isArray(data) ? data : [];
-  } catch {
-    return [];
-  }
-}
-
-/** Google Sheets -> UI shape */
+/** Local server (Google Sheets cache) -> UI shape */
 async function loadFromSheet() {
-  const [mData, cData] = await Promise.all([fetchTab("Materials"), fetchTab("Channels")]);
-
-  const materials = mData
-    .filter((m) => m && (m.title || "").trim())
-    .map((m) => ({
-      ...m,
-      categories: splitList(m.categories),
-      tags: splitList(m.tags),
-      gallery_urls: splitList(m.gallery_urls),
-    }));
-
-  return { materials, channels: cData };
+  const res = await fetch("/api/catalog");
+  if (!res.ok) throw new Error(`catalog: HTTP ${res.status}`);
+  const data = await res.json();
+  return { materials: data.materials || [], channels: data.channels || [] };
 }
 
 /** Supabase -> the same UI shape, so components need no changes */

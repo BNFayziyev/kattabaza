@@ -1,0 +1,657 @@
+<!doctype html>
+<!--
+  Bosh sahifadagi karusel rasmlari. Har bir <section id="..."> — bitta slayd (1280x720).
+  PNG ga aylantirish:  npm run slides   (natija: public/slides/<id>.png)
+  Ko'rish uchun brauzerda oching va manzil oxiriga #time-1 kabi slayd ID sini qo'shing.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1280px; height: 720px; overflow: hidden; background: #0a0a0c; }
+  body { font-family: Inter, "Segoe UI", system-ui, sans-serif; color: #e7e7ea; -webkit-font-smoothing: antialiased; }
+  svg.i { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+
+  .slide { display: none; position: absolute; inset: 0; overflow: hidden; }
+  .slide:target { display: block; }
+  .bg { position: absolute; inset: 0;
+    background:
+      radial-gradient(760px 460px at 8% -12%, rgba(251,146,60,.30), transparent 62%),
+      radial-gradient(700px 520px at 108% 112%, rgba(59,130,246,.16), transparent 62%),
+      #0a0a0c; }
+  .bg.grid::after { content: ""; position: absolute; inset: 0;
+    background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size: 40px 40px; mask-image: radial-gradient(ellipse at center, #000 40%, transparent 85%); }
+
+  .win { position: absolute; display: flex; border-radius: 18px; background: #131316; border: 1px solid rgba(255,255,255,.09);
+    box-shadow: 0 40px 90px rgba(0,0,0,.6), 0 0 0 1px rgba(0,0,0,.4); overflow: hidden; }
+  .side { width: 196px; flex-shrink: 0; background: #0f0f12; border-right: 1px solid rgba(255,255,255,.06); padding: 18px 12px; display: flex; flex-direction: column; gap: 3px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 15px; margin: 0 6px 16px; color: #fafafa; }
+  .logo { width: 30px; height: 30px; border-radius: 9px; background: #fb923c; color: #1a0f05; display: grid; place-items: center; }
+  .logo svg.i { width: 18px; height: 18px; stroke-width: 2.1; }
+  .nav { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 10px; font-size: 13px; font-weight: 500; color: #8f8f99; }
+  .nav.on { background: rgba(251,146,60,.14); color: #fdba74; }
+  .main { flex: 1; min-width: 0; padding: 22px 24px; display: flex; flex-direction: column; gap: 16px; }
+  .top { display: flex; align-items: center; gap: 12px; }
+  .h { font-size: 21px; font-weight: 700; color: #f4f4f5; letter-spacing: -.01em; }
+  .sub { font-size: 12.5px; color: #8b8b94; margin-top: 2px; }
+  .sp { flex: 1; }
+  .row { display: flex; gap: 12px; }
+  .tile { flex: 1; background: #18181c; border: 1px solid rgba(255,255,255,.06); border-radius: 14px; padding: 14px 16px; }
+  .tile .k { font-size: 11px; color: #8b8b94; text-transform: uppercase; letter-spacing: .06em; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+  .tile .v { font-size: 30px; font-weight: 800; margin-top: 6px; letter-spacing: -.02em; }
+  .tile .d { font-size: 11.5px; color: #71717a; margin-top: 2px; }
+  .panel { background: #18181c; border: 1px solid rgba(255,255,255,.06); border-radius: 14px; padding: 16px; }
+  .ptitle { font-size: 13px; font-weight: 700; color: #e4e4e7; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 999px; white-space: nowrap; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .ok { background: rgba(34,197,94,.14); color: #4ade80; }
+  .warn { background: rgba(245,158,11,.16); color: #fbbf24; }
+  .bad { background: rgba(239,68,68,.16); color: #f87171; }
+  .info { background: rgba(96,165,250,.16); color: #93c5fd; }
+  .mute { background: rgba(161,161,170,.14); color: #a1a1aa; }
+  .btn { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600; padding: 8px 12px; border-radius: 10px; background: #1d1d22; border: 1px solid rgba(255,255,255,.08); color: #d4d4d8; white-space: nowrap; }
+  .btn.pri { background: #fb923c; color: #1a0f05; border-color: transparent; }
+  .chip { font-size: 12px; font-weight: 600; padding: 7px 11px; border-radius: 10px; background: #1a1a1f; border: 1px solid rgba(255,255,255,.07); color: #a1a1aa; display: inline-flex; gap: 6px; align-items: center; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; font-weight: 600; color: #7c7c86; font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; padding: 9px 12px; border-bottom: 1px solid rgba(255,255,255,.07); }
+  td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,.045); color: #d4d4d8; white-space: nowrap; }
+  tr:last-child td { border-bottom: 0; }
+  .av { width: 28px; height: 28px; border-radius: 50%; display: inline-grid; place-items: center; font-size: 10.5px; font-weight: 800; color: #111; margin-right: 10px; vertical-align: middle; }
+  .mono { font-family: "JetBrains Mono", Consolas, monospace; }
+  .muted { color: #7c7c86; }
+  .b { font-weight: 700; color: #f4f4f5; }
+
+  /* Telefon */
+  .phone { position: absolute; width: 330px; height: 640px; border-radius: 44px; background: #050506; padding: 12px;
+    box-shadow: 0 40px 90px rgba(0,0,0,.65), 0 0 0 1.5px rgba(255,255,255,.12) inset; }
+  .screen { width: 100%; height: 100%; border-radius: 34px; overflow: hidden; background: #0e1621; display: flex; flex-direction: column; }
+  .tg-head { display: flex; align-items: center; gap: 10px; padding: 34px 14px 12px; background: #17212b; }
+  .tg-av { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; color: #1a0f05; background: #fb923c; }
+  .tg-body { flex: 1; padding: 14px 12px; display: flex; flex-direction: column; gap: 9px; justify-content: flex-end;
+    background: radial-gradient(400px 300px at 50% 0%, rgba(251,146,60,.08), transparent), #0e1621; }
+  .msg { max-width: 88%; background: #182533; border-radius: 14px 14px 14px 4px; padding: 9px 11px; font-size: 12.5px; line-height: 1.45; color: #e7edf3; }
+  .msg.me { align-self: flex-end; background: #2b5278; border-radius: 14px 14px 4px 14px; }
+  .msg .t { font-size: 10px; color: #7d8b99; text-align: right; margin-top: 3px; }
+  .kbd { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 2px; }
+  .kbd span { background: rgba(255,255,255,.07); border-radius: 8px; font-size: 11.5px; text-align: center; padding: 7px; color: #cfe3f5; font-weight: 600; }
+  .tg-input { margin: 0 10px 12px; background: #17212b; border-radius: 20px; padding: 10px 14px; font-size: 12px; color: #6b7a88; }
+
+  /* Kamera kataklari */
+  .cam { position: relative; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,.07); }
+  .cam .lbl { position: absolute; left: 10px; bottom: 9px; font-size: 12px; font-weight: 700; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,.8); }
+  .cam .stat { position: absolute; right: 10px; bottom: 9px; font-size: 10.5px; color: rgba(255,255,255,.85); font-family: "JetBrains Mono", monospace; background: rgba(0,0,0,.45); padding: 3px 7px; border-radius: 6px; }
+  .cam .live { position: absolute; left: 10px; top: 10px; }
+  .live-pill { background: rgba(239,68,68,.92); color: #fff; font-size: 10px; font-weight: 800; letter-spacing: .06em; padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 5px; }
+  .live-pill .dot { background: #fff; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+    <symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="cam" viewBox="0 0 24 24"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="m16 10 6-3v10l-6-3z"/></symbol>
+    <symbol id="users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/></symbol>
+    <symbol id="cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+    <symbol id="chart" viewBox="0 0 24 24"><path d="M4 20V11M10 20V5M16 20v-7M21 20H3"/></symbol>
+    <symbol id="gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M2.5 12h3M18.5 12h3M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></symbol>
+    <symbol id="truck" viewBox="0 0 24 24"><path d="M2 17V7a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v10"/><path d="M15 11h4l3 3v3h-2"/><circle cx="7" cy="17.5" r="2"/><circle cx="17.5" cy="17.5" r="2"/><path d="M9 17.5h6.5"/></symbol>
+    <symbol id="map" viewBox="0 0 24 24"><path d="m9 4-6 2.5v13.5l6-2.5 6 2.5 6-2.5V4l-6 2.5z"/><path d="M9 4v13.5M15 6.5V20"/></symbol>
+    <symbol id="bell" viewBox="0 0 24 24"><path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/></symbol>
+    <symbol id="send" viewBox="0 0 24 24"><path d="M21.5 3.5 2.5 11l7 2.5 2.5 7z"/><path d="m9.5 13.5 12-10"/></symbol>
+    <symbol id="scan" viewBox="0 0 24 24"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><circle cx="12" cy="10" r="3"/><path d="M7.5 17a5 5 0 0 1 9 0"/></symbol>
+    <symbol id="file" viewBox="0 0 24 24"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5"/></symbol>
+    <symbol id="dl" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M4 20h16"/></symbol>
+    <symbol id="search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+    <symbol id="pin" viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></symbol>
+    <symbol id="plug" viewBox="0 0 24 24"><path d="M9 3v5M15 3v5M6 8h12v3a6 6 0 0 1-12 0zM12 17v4"/></symbol>
+    <symbol id="alert" viewBox="0 0 24 24"><path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17h.01"/></symbol>
+    <symbol id="check" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></symbol>
+    <symbol id="moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></symbol>
+    <symbol id="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+    <symbol id="pulse" viewBox="0 0 24 24"><path d="M3 12h4l2.5-6 5 12 2.5-6h4"/></symbol>
+    <symbol id="building" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3"/></symbol>
+    <symbol id="signal" viewBox="0 0 24 24"><path d="M2 20h.01M7 20v-4M12 20v-8M17 20V8M22 4v16"/></symbol>
+  </defs>
+</svg>
+
+<!-- ============================ TIME 1: Dashboard ============================ -->
+<section class="slide" id="time-1">
+  <div class="bg grid"></div>
+  <div class="win" style="left:48px; top:40px; width:1184px; height:640px;">
+    <div class="side">
+      <div class="brand"><span class="logo"><svg class="i"><use href="#scan"/></svg></span>FaceID</div>
+      <div class="nav on"><svg class="i"><use href="#home"/></svg>Dashboard</div>
+      <div class="nav"><svg class="i"><use href="#clock"/></svg>Attendance</div>
+      <div class="nav"><svg class="i"><use href="#cam"/></svg>Cameras</div>
+      <div class="nav"><svg class="i"><use href="#users"/></svg>Employees</div>
+      <div class="nav"><svg class="i"><use href="#cal"/></svg>Shifts</div>
+      <div class="nav"><svg class="i"><use href="#chart"/></svg>Reports</div>
+      <div class="nav"><svg class="i"><use href="#gear"/></svg>Settings</div>
+    </div>
+    <div class="main">
+      <div class="top">
+        <div><div class="h">Dashboard</div><div class="sub">Tashkent office · Tuesday, 30 September</div></div>
+        <div class="sp"></div>
+        <span class="chip"><svg class="i"><use href="#building"/></svg>All companies</span>
+        <span class="chip"><svg class="i"><use href="#cal"/></svg>Today</span>
+      </div>
+      <div class="row">
+        <div class="tile"><div class="k"><span class="dot" style="color:#4ade80"></span>In office</div><div class="v">128</div><div class="d">of 142 planned</div></div>
+        <div class="tile"><div class="k"><span class="dot" style="color:#fbbf24"></span>Late</div><div class="v" style="color:#fbbf24">7</div><div class="d">avg. 12 min</div></div>
+        <div class="tile"><div class="k"><span class="dot" style="color:#f87171"></span>Absent</div><div class="v" style="color:#f87171">4</div><div class="d">2 on leave</div></div>
+        <div class="tile"><div class="k"><span class="dot" style="color:#93c5fd"></span>Night shift</div><div class="v" style="color:#93c5fd">12</div><div class="d">20:00 – 08:00</div></div>
+      </div>
+      <div class="row" style="flex:1; min-height:0;">
+        <div class="panel" style="flex:1.45; display:flex; flex-direction:column;">
+          <div class="ptitle"><svg class="i"><use href="#chart"/></svg>Attendance · last 7 days <span class="sp"></span>
+            <span class="muted" style="font-size:11px; font-weight:600; display:flex; gap:12px;"><span style="display:flex;align-items:center;gap:5px"><span class="dot" style="color:#3f3f46;width:8px;height:8px;border-radius:2px"></span>Plan</span><span style="display:flex;align-items:center;gap:5px"><span class="dot" style="color:#fb923c;width:8px;height:8px;border-radius:2px"></span>Fact</span></span>
+          </div>
+          <div style="flex:1; display:flex; align-items:flex-end; gap:22px; padding:6px 8px 0; border-bottom:1px solid rgba(255,255,255,.07);">
+            <!-- ustunlar: reja / fakt -->
+            <div style="flex:1;display:flex;gap:5px;align-items:flex-end;height:100%"><div style="flex:1;height:86%;background:#2a2a30;border-radius:5px 5px 0 0"></div><div style="flex:1;height:80%;background:linear-gradient(#fdba74,#fb923c);border-radius:5px 5px 0 0"></div></div>
+            <div style="flex:1;display:flex;gap:5px;align-items:flex-end;height:100%"><div style="flex:1;height:86%;background:#2a2a30;border-radius:5px 5px 0 0"></div><div style="flex:1;height:83%;background:linear-gradient(#fdba74,#fb923c);border-radius:5px 5px 0 0"></div></div>
+            <div style="flex:1;display:flex;gap:5px;align-items:flex-end;height:100%"><div style="flex:1;height:86%;background:#2a2a30;border-radius:5px 5px 0 0"></div><div style="flex:1;height:76%;background:linear-gradient(#fdba74,#fb923c);border-radius:5px 5px 0 0"></div></div>
+            <div style="flex:1;display:flex;gap:5px;align-items:flex-end;height:100%"><div style="flex:1;height:86%;background:#2a2a30;border-radius:5px 5px 0 0"></div><div style="flex:1;height:85%;background:linear-gradient(#fdba74,#fb923c);border-radius:5px 5px 0 0"></div></div>
+            <div style="flex:1;display:flex;gap:5px;align-items:flex-end;height:100%"><div style="flex:1;height:86%;background:#2a2a30;border-radius:5px 5px 0 0"></div><div style="flex:1;height:81%;background:linear-gradient(#fdba74,#fb923c);border-radius:5px 5px 0 0"></div></div>
+            <div style="flex:1;display:flex;gap:5px;align-items:flex-end;height:100%"><div style="flex:1;height:40%;background:#2a2a30;border-radius:5px 5px 0 0"></div><div style="flex:1;height:37%;background:linear-gradient(#fdba74,#fb923c);border-radius:5px 5px 0 0"></div></div>
+            <div style="flex:1;display:flex;gap:5px;align-items:flex-end;height:100%"><div style="flex:1;height:86%;background:#2a2a30;border-radius:5px 5px 0 0"></div><div style="flex:1;height:78%;background:linear-gradient(#fdba74,#fb923c);border-radius:5px 5px 0 0;box-shadow:0 0 24px rgba(251,146,60,.45)"></div></div>
+          </div>
+          <div style="display:flex; gap:22px; padding:8px 8px 0; font-size:11px; color:#71717a; font-weight:600;">
+            <span style="flex:1;text-align:center">Wed</span><span style="flex:1;text-align:center">Thu</span><span style="flex:1;text-align:center">Fri</span><span style="flex:1;text-align:center">Sat</span><span style="flex:1;text-align:center">Sun</span><span style="flex:1;text-align:center">Mon</span><span style="flex:1;text-align:center;color:#fdba74">Today</span>
+          </div>
+        </div>
+        <div class="panel" style="flex:1;">
+          <div class="ptitle"><svg class="i"><use href="#scan"/></svg>Live scans<span class="sp"></span><span class="pill ok"><span class="dot"></span>online</span></div>
+          <div style="display:flex; flex-direction:column; gap:12px; font-size:13px;">
+            <div style="display:flex;align-items:center"><span class="av" style="background:#fdba74">AK</span><div style="flex:1"><div class="b">Aziz Karimov</div><div class="muted" style="font-size:11.5px">Main entrance</div></div><span class="pill ok">In 08:57</span></div>
+            <div style="display:flex;align-items:center"><span class="av" style="background:#93c5fd">DR</span><div style="flex:1"><div class="b">Dilnoza Rahimova</div><div class="muted" style="font-size:11.5px">Main entrance</div></div><span class="pill warn">In 09:14</span></div>
+            <div style="display:flex;align-items:center"><span class="av" style="background:#86efac">JA</span><div style="flex:1"><div class="b">Jasur Aliyev</div><div class="muted" style="font-size:11.5px">Warehouse gate</div></div><span class="pill ok">In 08:49</span></div>
+            <div style="display:flex;align-items:center"><span class="av" style="background:#f9a8d4">MY</span><div style="flex:1"><div class="b">Malika Yusupova</div><div class="muted" style="font-size:11.5px">Office 2 · floor 3</div></div><span class="pill info">Out 08:02</span></div>
+            <div style="display:flex;align-items:center"><span class="av" style="background:#c4b5fd">ST</span><div style="flex:1"><div class="b">Sardor Tursunov</div><div class="muted" style="font-size:11.5px">Main entrance</div></div><span class="pill ok">In 08:41</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ TIME 2: Attendance ============================ -->
+<section class="slide" id="time-2">
+  <div class="bg grid"></div>
+  <div class="win" style="left:48px; top:40px; width:1184px; height:640px;">
+    <div class="side">
+      <div class="brand"><span class="logo"><svg class="i"><use href="#scan"/></svg></span>FaceID</div>
+      <div class="nav"><svg class="i"><use href="#home"/></svg>Dashboard</div>
+      <div class="nav on"><svg class="i"><use href="#clock"/></svg>Attendance</div>
+      <div class="nav"><svg class="i"><use href="#cam"/></svg>Cameras</div>
+      <div class="nav"><svg class="i"><use href="#users"/></svg>Employees</div>
+      <div class="nav"><svg class="i"><use href="#cal"/></svg>Shifts</div>
+      <div class="nav"><svg class="i"><use href="#chart"/></svg>Reports</div>
+      <div class="nav"><svg class="i"><use href="#gear"/></svg>Settings</div>
+    </div>
+    <div class="main">
+      <div class="top">
+        <div><div class="h">Daily attendance</div><div class="sub">30 September · plan vs. fact</div></div>
+        <div class="sp"></div>
+        <span class="btn"><svg class="i"><use href="#file"/></svg>Excel (day)</span>
+        <span class="btn"><svg class="i"><use href="#file"/></svg>Excel (month)</span>
+        <span class="btn pri"><svg class="i"><use href="#dl"/></svg>Print / PDF</span>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <span class="pill ok" style="font-size:12px;padding:6px 11px">Present 128</span>
+        <span class="pill warn" style="font-size:12px;padding:6px 11px">Late 7</span>
+        <span class="pill info" style="font-size:12px;padding:6px 11px">Early leave 3</span>
+        <span class="pill bad" style="font-size:12px;padding:6px 11px">Absent 4</span>
+        <span class="pill mute" style="font-size:12px;padding:6px 11px">Night shift 12</span>
+      </div>
+      <div class="panel" style="padding:4px 6px; flex:1;">
+        <table>
+          <tr><th>Employee</th><th>Shift</th><th>Check-in</th><th>Check-out</th><th>Worked</th><th>Late</th><th>Status</th></tr>
+          <tr><td><span class="av" style="background:#fdba74">AK</span><span class="b">Aziz Karimov</span></td><td class="muted">09:00 – 18:00</td><td class="mono">08:57</td><td class="mono">18:06</td><td class="mono">9h 09m</td><td class="muted">—</td><td><span class="pill ok">On time</span></td></tr>
+          <tr><td><span class="av" style="background:#93c5fd">DR</span><span class="b">Dilnoza Rahimova</span></td><td class="muted">09:00 – 18:00</td><td class="mono" style="color:#fbbf24">09:14</td><td class="mono">18:02</td><td class="mono">8h 48m</td><td class="mono" style="color:#fbbf24">14 min</td><td><span class="pill warn">Late</span></td></tr>
+          <tr><td><span class="av" style="background:#86efac">JA</span><span class="b">Jasur Aliyev</span></td><td class="muted">08:00 – 17:00</td><td class="mono">07:52</td><td class="mono">17:01</td><td class="mono">9h 09m</td><td class="muted">—</td><td><span class="pill ok">On time</span></td></tr>
+          <tr><td><span class="av" style="background:#f9a8d4">MY</span><span class="b">Malika Yusupova</span></td><td class="muted">20:00 – 08:00</td><td class="mono">19:48</td><td class="mono">08:02</td><td class="mono">12h 14m</td><td class="muted">—</td><td><span class="pill info">Night shift</span></td></tr>
+          <tr><td><span class="av" style="background:#c4b5fd">ST</span><span class="b">Sardor Tursunov</span></td><td class="muted">09:00 – 18:00</td><td class="mono">08:41</td><td class="mono" style="color:#93c5fd">16:30</td><td class="mono">7h 49m</td><td class="muted">—</td><td><span class="pill info">Early leave</span></td></tr>
+          <tr><td><span class="av" style="background:#fcd34d">NI</span><span class="b">Nodira Ismoilova</span></td><td class="muted">09:00 – 18:00</td><td class="mono">08:55</td><td class="muted">in office</td><td class="mono">—</td><td class="muted">—</td><td><span class="pill ok">In office</span></td></tr>
+          <tr><td><span class="av" style="background:#a5b4fc">BN</span><span class="b">Bekzod Nazarov</span></td><td class="muted">09:00 – 18:00</td><td class="muted">—</td><td class="muted">—</td><td class="mono">—</td><td class="muted">—</td><td><span class="pill bad">Absent</span></td></tr>
+          <tr><td><span class="av" style="background:#67e8f9">OR</span><span class="b">Otabek Rashidov</span></td><td class="muted">08:00 – 17:00</td><td class="mono" style="color:#fbbf24">08:09</td><td class="mono">17:12</td><td class="mono">9h 03m</td><td class="mono" style="color:#fbbf24">9 min</td><td><span class="pill warn">Late</span></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ TIME 3: Cameras ============================ -->
+<section class="slide" id="time-3">
+  <div class="bg grid"></div>
+  <div class="win" style="left:48px; top:40px; width:1184px; height:640px;">
+    <div class="side">
+      <div class="brand"><span class="logo"><svg class="i"><use href="#scan"/></svg></span>FaceID</div>
+      <div class="nav"><svg class="i"><use href="#home"/></svg>Dashboard</div>
+      <div class="nav"><svg class="i"><use href="#clock"/></svg>Attendance</div>
+      <div class="nav on"><svg class="i"><use href="#cam"/></svg>Cameras</div>
+      <div class="nav"><svg class="i"><use href="#users"/></svg>Employees</div>
+      <div class="nav"><svg class="i"><use href="#cal"/></svg>Shifts</div>
+      <div class="nav"><svg class="i"><use href="#chart"/></svg>Reports</div>
+      <div class="nav"><svg class="i"><use href="#gear"/></svg>Settings</div>
+    </div>
+    <div class="main">
+      <div class="top">
+        <div><div class="h">Cameras</div><div class="sub">Tashkent office · 4 of 4 online</div></div>
+        <div class="sp"></div>
+        <span class="chip">480p</span><span class="chip">5 fps</span><span class="btn pri"><svg class="i"><use href="#cam"/></svg>Live</span>
+      </div>
+      <div style="flex:1; display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:12px; min-height:0;">
+        <!-- 1: kirish yo'lagi -->
+        <div class="cam">
+          <svg viewBox="0 0 470 250" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block">
+            <defs><linearGradient id="c1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b3f47"/><stop offset="1" stop-color="#1b1d22"/></linearGradient></defs>
+            <rect width="470" height="250" fill="url(#c1)"/>
+            <path d="M0 250 L180 110 L290 110 L470 250 Z" fill="#2a2c31"/>
+            <path d="M180 110 L180 20 L290 20 L290 110" fill="#34373e"/>
+            <rect x="205" y="40" width="60" height="70" fill="#4b4f58" stroke="#5c616b"/>
+            <path d="M0 0 L180 20 L180 110 L0 250Z" fill="#23252a"/><path d="M470 0 L290 20 L290 110 L470 250Z" fill="#26282d"/>
+            <circle cx="236" cy="118" r="17" fill="#9aa0a8"/><path d="M204 205 Q236 140 268 205 Z" fill="#6f757e"/>
+            <rect x="214" y="96" width="44" height="46" rx="4" fill="none" stroke="#fb923c" stroke-width="2.5"/>
+            <text x="214" y="90" font-family="Inter,Segoe UI" font-size="11" font-weight="700" fill="#fb923c">A. Karimov · 99%</text>
+          </svg>
+          <div class="live"><span class="live-pill"><span class="dot"></span>LIVE</span></div>
+          <div class="lbl">Main entrance</div><div class="stat">6.4 fps · 780 kbit/s</div>
+        </div>
+        <!-- 2: ofis zali -->
+        <div class="cam">
+          <svg viewBox="0 0 470 250" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block">
+            <rect width="470" height="250" fill="#2b3036"/><rect y="150" width="470" height="100" fill="#22262b"/>
+            <rect x="30" y="40" width="110" height="70" fill="#55606b" opacity=".6"/><rect x="180" y="40" width="110" height="70" fill="#55606b" opacity=".6"/><rect x="330" y="40" width="110" height="70" fill="#55606b" opacity=".6"/>
+            <rect x="40" y="150" width="150" height="14" rx="3" fill="#4a4f57"/><rect x="270" y="150" width="150" height="14" rx="3" fill="#4a4f57"/>
+            <circle cx="95" cy="128" r="12" fill="#8c929a"/><path d="M75 150 Q95 118 115 150Z" fill="#6b717a"/>
+            <circle cx="340" cy="126" r="12" fill="#8c929a"/><path d="M320 150 Q340 116 360 150Z" fill="#6b717a"/>
+            <rect x="80" y="112" width="30" height="32" rx="3" fill="none" stroke="#4ade80" stroke-width="2"/>
+          </svg>
+          <div class="live"><span class="live-pill"><span class="dot"></span>LIVE</span></div>
+          <div class="lbl">Open space · floor 2</div><div class="stat">5.8 fps · 610 kbit/s</div>
+        </div>
+        <!-- 3: ombor darvozasi -->
+        <div class="cam">
+          <svg viewBox="0 0 470 250" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block">
+            <rect width="470" height="250" fill="#1f2326"/><rect x="60" y="24" width="350" height="156" fill="#2c3135"/>
+            <g stroke="#3a4045" stroke-width="3"><path d="M60 50h350M60 78h350M60 106h350M60 134h350M60 162h350"/></g>
+            <rect x="0" y="180" width="470" height="70" fill="#191c1f"/><path d="M0 200h470" stroke="#c9a227" stroke-width="4" stroke-dasharray="26 16"/>
+            <rect x="300" y="150" width="90" height="40" rx="4" fill="#3b4148"/><circle cx="318" cy="192" r="8" fill="#111"/><circle cx="372" cy="192" r="8" fill="#111"/>
+          </svg>
+          <div class="live"><span class="pill mute" style="background:rgba(0,0,0,.55);color:#e4e4e7">Snapshot · every 10 s</span></div>
+          <div class="lbl">Warehouse gate</div><div class="stat">1 frame / 10 s</div>
+        </div>
+        <!-- 4: yuz terminali -->
+        <div class="cam" style="background:#121417">
+          <svg viewBox="0 0 470 250" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block">
+            <defs><radialGradient id="c4" cx=".5" cy=".45" r=".6"><stop offset="0" stop-color="#3a3530"/><stop offset="1" stop-color="#15171a"/></radialGradient></defs>
+            <rect width="470" height="250" fill="url(#c4)"/>
+            <ellipse cx="235" cy="118" rx="52" ry="64" fill="#8d8378"/><path d="M150 250 Q235 160 320 250Z" fill="#5b5550"/>
+            <g stroke="#fb923c" stroke-width="3.5" fill="none" stroke-linecap="round">
+              <path d="M168 58v-20h20M302 58v-20h-20M168 178v20h20M302 178v20h-20"/>
+            </g>
+            <path d="M172 112 H298" stroke="#fb923c" stroke-width="2" opacity=".85"/>
+          </svg>
+          <div class="live"><span class="pill ok" style="background:rgba(0,0,0,.55)"><span class="dot"></span>Match 99.2%</span></div>
+          <div class="lbl">Face terminal · reception</div><div class="stat">check-in 08:57</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ TIME 4: Telegram ============================ -->
+<section class="slide" id="time-4">
+  <div class="bg"></div>
+  <!-- chapda: yuz skaneri -->
+  <div style="position:absolute; left:110px; top:120px; width:560px; height:480px;">
+    <div style="position:absolute; inset:0; border-radius:50%; background:radial-gradient(circle, rgba(251,146,60,.18), transparent 65%);"></div>
+    <svg viewBox="0 0 560 480" style="position:absolute; inset:0">
+      <circle cx="280" cy="230" r="170" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="2"/>
+      <circle cx="280" cy="230" r="170" fill="none" stroke="#fb923c" stroke-width="4" stroke-dasharray="180 900" stroke-linecap="round" transform="rotate(-60 280 230)"/>
+      <ellipse cx="280" cy="210" rx="78" ry="96" fill="#26262c" stroke="#3f3f46" stroke-width="2"/>
+      <path d="M160 400 Q280 280 400 400" fill="#26262c" stroke="#3f3f46" stroke-width="2"/>
+      <g stroke="#fb923c" stroke-width="5" fill="none" stroke-linecap="round">
+        <path d="M180 120v-34h34M380 120v-34h-34M180 300v34h34M380 300v34h-34"/>
+      </g>
+      <rect x="186" y="206" width="188" height="3" fill="#fb923c" opacity=".9"/>
+      <rect x="186" y="200" width="188" height="16" fill="#fb923c" opacity=".12"/>
+    </svg>
+    <div style="position:absolute; left:10px; top:40px;" class="pill ok"><span class="dot"></span>Face recognized · 99.2%</div>
+    <div style="position:absolute; right:0; top:330px; background:#18181c; border:1px solid rgba(255,255,255,.08); border-radius:14px; padding:12px 14px; box-shadow:0 20px 40px rgba(0,0,0,.5);">
+      <div class="muted" style="font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.06em">Check-in</div>
+      <div style="font-size:26px; font-weight:800; color:#fdba74" class="mono">08:57</div>
+      <div style="font-size:12px" class="muted">Main entrance · Tashkent</div>
+    </div>
+  </div>
+  <!-- o'ngda: telefon -->
+  <div class="phone" style="left:830px; top:40px;">
+    <div class="screen">
+      <div class="tg-head">
+        <div class="tg-av"><svg class="i" style="width:20px;height:20px"><use href="#scan"/></svg></div>
+        <div><div style="font-weight:700; font-size:14px">FaceID bot</div><div style="font-size:11px; color:#7d8b99">bot</div></div>
+      </div>
+      <div class="tg-body">
+        <div class="msg">Press the button to sign in to the platform.
+          <div class="kbd" style="grid-template-columns:1fr"><span>Sign in to time.kattabaza.uz</span></div>
+          <div class="t">08:40</div></div>
+        <div class="msg me">✓ Signed in<div class="t">08:40</div></div>
+        <div class="msg"><b style="color:#fdba74">Check-in</b> · Aziz Karimov<br/>08:57 · Main entrance<br/><span style="color:#4ade80">On time</span><div class="t">08:57</div></div>
+        <div class="msg"><b style="color:#fbbf24">Late</b> · Dilnoza Rahimova<br/>09:14 · 14 min late<div class="t">09:14</div></div>
+        <div class="msg"><b>Daily summary</b><br/>Present 128 · Late 7 · Absent 4
+          <div class="kbd"><span>Excel</span><span>Details</span></div>
+          <div class="t">18:30</div></div>
+      </div>
+      <div class="tg-input">Message</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ TIME 5: Shifts ============================ -->
+<section class="slide" id="time-5">
+  <div class="bg grid"></div>
+  <div class="win" style="left:48px; top:40px; width:1184px; height:640px;">
+    <div class="side">
+      <div class="brand"><span class="logo"><svg class="i"><use href="#scan"/></svg></span>FaceID</div>
+      <div class="nav"><svg class="i"><use href="#home"/></svg>Dashboard</div>
+      <div class="nav"><svg class="i"><use href="#clock"/></svg>Attendance</div>
+      <div class="nav"><svg class="i"><use href="#cam"/></svg>Cameras</div>
+      <div class="nav"><svg class="i"><use href="#users"/></svg>Employees</div>
+      <div class="nav on"><svg class="i"><use href="#cal"/></svg>Shifts</div>
+      <div class="nav"><svg class="i"><use href="#chart"/></svg>Reports</div>
+      <div class="nav"><svg class="i"><use href="#gear"/></svg>Settings</div>
+    </div>
+    <div class="main">
+      <div class="top">
+        <div><div class="h">Shifts</div><div class="sub">Week 29 Sep – 5 Oct</div></div>
+        <div class="sp"></div>
+        <span class="chip" style="color:#fdba74"><svg class="i"><use href="#sun"/></svg>Day 09:00 – 18:00</span>
+        <span class="chip" style="color:#93c5fd"><svg class="i"><use href="#moon"/></svg>Night 20:00 – 08:00</span>
+      </div>
+      <div class="panel" style="flex:1; padding:0; overflow:hidden; display:flex; flex-direction:column;">
+        <div style="display:grid; grid-template-columns:200px repeat(7,1fr); font-size:11px; color:#7c7c86; font-weight:700; text-transform:uppercase; letter-spacing:.06em; border-bottom:1px solid rgba(255,255,255,.07);">
+          <div style="padding:12px 16px">Employee</div><div style="padding:12px 0;text-align:center">Mon 29</div><div style="padding:12px 0;text-align:center;color:#fdba74">Tue 30</div><div style="padding:12px 0;text-align:center">Wed 1</div><div style="padding:12px 0;text-align:center">Thu 2</div><div style="padding:12px 0;text-align:center">Fri 3</div><div style="padding:12px 0;text-align:center">Sat 4</div><div style="padding:12px 0;text-align:center">Sun 5</div>
+        </div>
+        <div id="shift-rows" style="flex:1; display:flex; flex-direction:column;"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ TREYLER 1: Map ============================ -->
+<section class="slide" id="treyler-1">
+  <div class="bg"></div>
+  <div class="win" style="left:48px; top:40px; width:1184px; height:640px;">
+    <div class="side" style="width:340px; padding:18px 14px;">
+      <div class="brand"><span class="logo"><svg class="i"><use href="#truck"/></svg></span>Trailer Watch</div>
+      <div class="chip" style="margin:0 2px 12px; padding:9px 12px;"><svg class="i"><use href="#search"/></svg>Search trailer…</div>
+      <div style="display:flex; gap:6px; margin:0 2px 12px;"><span class="pill bad">Critical 12</span><span class="pill warn">Warning 38</span><span class="pill mute">Stale 5</span></div>
+      <div id="trailer-list" style="display:flex; flex-direction:column; gap:6px;"></div>
+    </div>
+    <div style="flex:1; position:relative; background:#101216; overflow:hidden;">
+      <svg viewBox="0 0 844 640" style="position:absolute; inset:0; width:100%; height:100%">
+        <rect width="844" height="640" fill="#0f1317"/>
+        <path d="M-20 90 C120 60 260 120 380 80 S640 40 870 110 L870 -20 L-20 -20Z" fill="#131a20"/>
+        <path d="M-20 520 C160 470 300 560 470 500 S720 450 870 520 L870 660 L-20 660Z" fill="#0c1a24"/>
+        <path d="M560 180 C620 150 700 170 740 220 C780 280 720 340 650 330 C580 320 520 250 560 180Z" fill="#131a20"/>
+        <g stroke="#1e262e" stroke-width="2" fill="none">
+          <path d="M0 200 H844 M0 330 H844 M0 430 H844 M150 0 V640 M320 0 V640 M500 0 V640 M680 0 V640"/>
+        </g>
+        <g stroke="#2a333d" stroke-width="5" fill="none" stroke-linecap="round">
+          <path d="M-10 380 C140 340 260 300 420 310 S700 250 860 190"/>
+          <path d="M260 -10 C280 150 250 300 300 460 S360 600 380 660"/>
+          <path d="M520 660 C540 520 600 420 720 380 S820 360 860 350"/>
+        </g>
+        <g font-family="Inter, Segoe UI" font-size="11" fill="#4b5563" font-weight="600">
+          <text x="92" y="300">San Antonio</text><text x="430" y="290">Houston</text><text x="610" y="160">Dallas</text><text x="330" y="560">Laredo</text>
+        </g>
+        <!-- markerlar -->
+        <g>
+          <circle cx="120" cy="250" r="7" fill="#4ade80"/><circle cx="180" cy="370" r="7" fill="#4ade80"/><circle cx="230" cy="190" r="7" fill="#fbbf24"/>
+          <circle cx="410" cy="330" r="7" fill="#4ade80"/><circle cx="455" cy="305" r="7" fill="#fbbf24"/><circle cx="470" cy="350" r="7" fill="#4ade80"/>
+          <circle cx="640" cy="190" r="7" fill="#fbbf24"/><circle cx="700" cy="250" r="7" fill="#4ade80"/><circle cx="600" cy="420" r="7" fill="#a1a1aa"/>
+          <circle cx="760" cy="330" r="7" fill="#4ade80"/><circle cx="545" cy="240" r="7" fill="#4ade80"/><circle cx="300" cy="470" r="7" fill="#fbbf24"/>
+          <circle cx="210" cy="440" r="7" fill="#f87171"/><circle cx="520" cy="470" r="7" fill="#f87171"/>
+          <circle cx="352" cy="540" r="22" fill="#f87171" opacity=".18"/><circle cx="352" cy="540" r="10" fill="#f87171" stroke="#fff" stroke-width="3"/>
+        </g>
+      </svg>
+      <div style="position:absolute; left:372px; top:392px; width:260px; background:#18181c; border:1px solid rgba(255,255,255,.1); border-radius:14px; padding:14px; box-shadow:0 20px 50px rgba(0,0,0,.6);">
+        <div style="display:flex; align-items:center; gap:8px;"><span class="b mono" style="font-size:15px">53012</span><span class="pill bad">Critical</span></div>
+        <div style="font-size:26px; font-weight:800; color:#f87171; margin-top:4px">7d 2h idle</div>
+        <div class="muted" style="font-size:12px; margin-top:2px">since 23 Sep 14:10 · Laredo, TX</div>
+        <div style="display:flex; gap:6px; margin-top:10px;"><span class="chip">Spireon</span><span class="chip">last ping 6 min</span></div>
+      </div>
+      <div style="position:absolute; right:16px; top:16px; display:flex; flex-direction:column; gap:6px; background:rgba(24,24,28,.9); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:10px 12px; font-size:11.5px; font-weight:600;">
+        <span style="display:flex;gap:7px;align-items:center"><span class="dot" style="color:#4ade80;width:8px;height:8px"></span>Moving / &lt; 48 h</span>
+        <span style="display:flex;gap:7px;align-items:center"><span class="dot" style="color:#fbbf24;width:8px;height:8px"></span>Warning &gt; 48 h</span>
+        <span style="display:flex;gap:7px;align-items:center"><span class="dot" style="color:#f87171;width:8px;height:8px"></span>Critical &gt; 5 d</span>
+        <span style="display:flex;gap:7px;align-items:center"><span class="dot" style="color:#a1a1aa;width:8px;height:8px"></span>No signal &gt; 24 h</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ TREYLER 2: Dwell list ============================ -->
+<section class="slide" id="treyler-2">
+  <div class="bg grid"></div>
+  <div class="win" style="left:48px; top:40px; width:1184px; height:640px;">
+    <div class="side">
+      <div class="brand"><span class="logo"><svg class="i"><use href="#truck"/></svg></span>Trailer Watch</div>
+      <div class="nav on"><svg class="i"><use href="#home"/></svg>Overview</div>
+      <div class="nav"><svg class="i"><use href="#map"/></svg>Map</div>
+      <div class="nav"><svg class="i"><use href="#bell"/></svg>Alerts</div>
+      <div class="nav"><svg class="i"><use href="#plug"/></svg>Providers</div>
+      <div class="nav"><svg class="i"><use href="#users"/></svg>Users</div>
+      <div class="nav"><svg class="i"><use href="#gear"/></svg>Settings</div>
+    </div>
+    <div class="main">
+      <div class="top">
+        <div><div class="h">Longest idle trailers</div><div class="sub">312 trailers · updated 2 min ago</div></div>
+        <div class="sp"></div>
+        <span class="chip"><svg class="i"><use href="#search"/></svg>53012</span>
+        <span class="btn pri"><svg class="i"><use href="#send"/></svg>Send report</span>
+      </div>
+      <div class="row">
+        <div class="tile" style="border-color:rgba(248,113,113,.3)"><div class="k"><span class="dot" style="color:#f87171"></span>Critical</div><div class="v" style="color:#f87171">12</div><div class="d">idle more than 5 days</div></div>
+        <div class="tile"><div class="k"><span class="dot" style="color:#fbbf24"></span>Warning</div><div class="v" style="color:#fbbf24">38</div><div class="d">idle more than 48 h</div></div>
+        <div class="tile"><div class="k"><span class="dot" style="color:#a1a1aa"></span>No signal</div><div class="v" style="color:#d4d4d8">5</div><div class="d">no ping for 24 h</div></div>
+        <div class="tile"><div class="k"><span class="dot" style="color:#4ade80"></span>Moving</div><div class="v" style="color:#4ade80">257</div><div class="d">all good</div></div>
+      </div>
+      <div class="panel" style="padding:4px 6px; flex:1;">
+        <table>
+          <tr><th>Trailer</th><th>Provider</th><th>Location</th><th>Idle for</th><th>Since</th><th>Last ping</th><th>Status</th></tr>
+          <tr><td class="b mono">53012</td><td class="muted">Spireon</td><td>Laredo, TX</td><td class="mono" style="color:#f87171;font-weight:700">7d 2h</td><td class="muted">23 Sep 14:10</td><td class="muted">6 min</td><td><span class="pill bad">Critical</span></td></tr>
+          <tr><td class="b mono">48877</td><td class="muted">SkyBitz</td><td>Memphis, TN</td><td class="mono" style="color:#f87171;font-weight:700">6d 9h</td><td class="muted">24 Sep 07:02</td><td class="muted">14 min</td><td><span class="pill bad">Critical</span></td></tr>
+          <tr><td class="b mono">XT-2231</td><td class="muted">XTRA Lease</td><td>Joliet, IL</td><td class="mono" style="color:#f87171;font-weight:700">5d 4h</td><td class="muted">25 Sep 12:40</td><td class="muted">1 h</td><td><span class="pill bad">Critical</span></td></tr>
+          <tr><td class="b mono">61540</td><td class="muted">ORBCOMM</td><td>Atlanta, GA</td><td class="mono" style="color:#fbbf24;font-weight:700">3d 18h</td><td class="muted">26 Sep 22:15</td><td class="muted">9 min</td><td><span class="pill warn">Warning</span></td></tr>
+          <tr><td class="b mono">GT-907</td><td class="muted">GPSTab</td><td>Dallas, TX</td><td class="mono" style="color:#fbbf24;font-weight:700">2d 21h</td><td class="muted">27 Sep 19:30</td><td class="muted">3 min</td><td><span class="pill warn">Warning</span></td></tr>
+          <tr><td class="b mono">53147</td><td class="muted">Spireon</td><td>Houston, TX</td><td class="mono" style="color:#fbbf24;font-weight:700">2d 6h</td><td class="muted">28 Sep 10:05</td><td class="muted">11 min</td><td><span class="pill warn">Warning</span></td></tr>
+          <tr><td class="b mono">47002</td><td class="muted">SkyBitz</td><td>Phoenix, AZ</td><td class="mono muted">—</td><td class="muted">—</td><td class="mono" style="color:#a1a1aa">31 h</td><td><span class="pill mute">No signal</span></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ TREYLER 3: Providers ============================ -->
+<section class="slide" id="treyler-3">
+  <div class="bg grid"></div>
+  <svg viewBox="0 0 1280 720" style="position:absolute; inset:0">
+    <defs>
+      <linearGradient id="ln" x1="0" x2="1"><stop offset="0" stop-color="#fb923c" stop-opacity=".15"/><stop offset="1" stop-color="#fb923c" stop-opacity=".9"/></linearGradient>
+      <linearGradient id="ln2" x1="0" x2="1"><stop offset="0" stop-color="#fb923c" stop-opacity=".9"/><stop offset="1" stop-color="#fb923c" stop-opacity=".15"/></linearGradient>
+    </defs>
+    <g fill="none" stroke="url(#ln)" stroke-width="2.5">
+      <path d="M390 150 C500 150 480 360 560 360"/><path d="M390 255 C500 255 480 360 560 360"/><path d="M390 360 C470 360 500 360 560 360"/>
+      <path d="M390 465 C500 465 480 360 560 360"/><path d="M390 570 C500 570 480 360 560 360"/>
+    </g>
+    <g fill="none" stroke="url(#ln2)" stroke-width="2.5">
+      <path d="M720 360 C800 360 780 200 890 200"/><path d="M720 360 C800 360 830 360 890 360"/><path d="M720 360 C800 360 780 520 890 520"/>
+    </g>
+    <g fill="#fb923c"><circle cx="560" cy="360" r="4"/><circle cx="720" cy="360" r="4"/></g>
+  </svg>
+  <div id="providers" style="position:absolute; left:90px; top:122px; display:flex; flex-direction:column; gap:49px;"></div>
+  <div style="position:absolute; left:560px; top:250px; width:160px; height:220px; border-radius:24px; background:linear-gradient(180deg,#1f1a16,#141416); border:1px solid rgba(251,146,60,.45); box-shadow:0 0 60px rgba(251,146,60,.25), 0 30px 60px rgba(0,0,0,.5); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; text-align:center; padding:14px;">
+    <span class="logo" style="width:56px; height:56px; border-radius:16px;"><svg class="i" style="width:30px;height:30px"><use href="#truck"/></svg></span>
+    <div style="font-weight:800; font-size:16px">Trailer Watch</div>
+    <div class="muted" style="font-size:11.5px; line-height:1.4">anchor point<br/>+ 300 m radius</div>
+    <span class="pill ok"><span class="dot"></span>every 15 min</span>
+  </div>
+  <div style="position:absolute; left:890px; top:165px; display:flex; flex-direction:column; gap:90px;">
+    <div class="panel" style="width:290px; display:flex; gap:12px; align-items:center;"><span class="logo" style="background:#27272a;color:#fdba74"><svg class="i"><use href="#home"/></svg></span><div><div class="b">Dashboard</div><div class="muted" style="font-size:12px">idle ranking, filters, notes</div></div></div>
+    <div class="panel" style="width:290px; display:flex; gap:12px; align-items:center;"><span class="logo" style="background:#27272a;color:#fdba74"><svg class="i"><use href="#map"/></svg></span><div><div class="b">Live map</div><div class="muted" style="font-size:12px">colored by idle time</div></div></div>
+    <div class="panel" style="width:290px; display:flex; gap:12px; align-items:center;"><span class="logo" style="background:#27272a;color:#fdba74"><svg class="i"><use href="#send"/></svg></span><div><div class="b">Telegram alerts</div><div class="muted" style="font-size:12px">daily 08:00 report</div></div></div>
+  </div>
+</section>
+
+<!-- ============================ TREYLER 4: Telegram ============================ -->
+<section class="slide" id="treyler-4">
+  <div class="bg"></div>
+  <div style="position:absolute; left:110px; top:205px; width:560px;">
+    <div class="panel" style="border-color:rgba(248,113,113,.35); background:linear-gradient(180deg,#1d1414,#17171a); padding:22px; box-shadow:0 30px 60px rgba(0,0,0,.5);">
+      <div style="display:flex; align-items:center; gap:10px;"><span class="pill bad"><svg class="i" style="width:13px;height:13px"><use href="#alert"/></svg>Critical alert</span><span class="muted" style="font-size:12px">just now</span></div>
+      <div style="font-size:30px; font-weight:800; margin-top:14px; letter-spacing:-.02em">Trailer <span class="mono" style="color:#fdba74">53012</span> has been<br/>standing for 5 days</div>
+      <div class="muted" style="margin-top:10px; font-size:14px; display:flex; align-items:center; gap:6px"><svg class="i"><use href="#pin"/></svg>Laredo, TX · Spireon · since 23 Sep 14:10</div>
+      <div style="display:flex; gap:8px; margin-top:18px;"><span class="btn pri">Open on map</span><span class="btn">Snooze 3 days</span><span class="btn">Add note</span></div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:26px;">
+      <span class="chip mono" style="color:#fdba74">/top</span><span class="chip mono" style="color:#fdba74">/kritik</span><span class="chip mono" style="color:#fdba74">/holat</span><span class="chip mono" style="color:#fdba74">/qidir 53012</span><span class="chip mono" style="color:#fdba74">/snooze 53012 3</span>
+    </div>
+  </div>
+  <div class="phone" style="left:830px; top:40px;">
+    <div class="screen">
+      <div class="tg-head">
+        <div class="tg-av"><svg class="i" style="width:20px;height:20px"><use href="#truck"/></svg></div>
+        <div><div style="font-weight:700; font-size:14px">Trailer Watch</div><div style="font-size:11px; color:#7d8b99">@treyler_kattabot</div></div>
+      </div>
+      <div class="tg-body">
+        <div class="msg"><b>Daily report · 08:00</b><br/>
+          <span style="color:#f87171">● Critical: 12</span> &nbsp;<span style="color:#fbbf24">● Warning: 38</span><br/><br/>
+          <b>Top idle trailers</b><br/>
+          <span class="mono">1. 53012</span> — 7d 2h — Laredo<br/>
+          <span class="mono">2. 48877</span> — 6d 9h — Memphis<br/>
+          <span class="mono">3. XT-2231</span> — 5d 4h — Joliet
+          <div class="t">08:00</div></div>
+        <div class="msg me">/qidir 61540<div class="t">09:12</div></div>
+        <div class="msg"><b class="mono">61540</b> · ORBCOMM<br/>Atlanta, GA<br/><span style="color:#fbbf24">Idle 3d 18h</span> · ping 9 min ago
+          <div class="kbd"><span>Map</span><span>Snooze</span></div>
+          <div class="t">09:12</div></div>
+      </div>
+      <div class="tg-input">Message</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ MED 1: Coming soon ============================ -->
+<section class="slide" id="med-1">
+  <div style="position:absolute; inset:0; background:
+      radial-gradient(700px 480px at 50% 40%, rgba(45,212,191,.22), transparent 65%),
+      radial-gradient(600px 400px at 100% 100%, rgba(59,130,246,.15), transparent 60%), #06100f;"></div>
+  <div class="bg grid" style="background:none"></div>
+  <svg viewBox="0 0 1280 720" style="position:absolute; inset:0">
+    <path d="M0 625 H170 L205 575 L250 690 L295 540 L335 625 H1280" fill="none" stroke="rgba(45,212,191,.35)" stroke-width="3" stroke-linejoin="round"/>
+  </svg>
+  <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
+    <div style="width:128px; height:128px; border-radius:36px; background:linear-gradient(145deg,#2dd4bf,#0d9488); display:grid; place-items:center; box-shadow:0 0 80px rgba(45,212,191,.45), 0 30px 60px rgba(0,0,0,.45);">
+      <svg viewBox="0 0 24 24" style="width:66px;height:66px" fill="#ecfeff"><path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/></svg>
+    </div>
+    <div class="mono" style="margin-top:34px; font-size:20px; color:#5eead4; letter-spacing:.02em">med.kattabaza.uz</div>
+    <div style="margin-top:10px; font-size:76px; font-weight:800; letter-spacing:-.03em; color:#f0fdfa">Coming soon</div>
+    <div style="margin-top:14px; display:flex; gap:10px;">
+      <span class="pill" style="background:rgba(45,212,191,.14); color:#5eead4; font-size:13px; padding:7px 14px"><span class="dot"></span>In development</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ MED 2: Preview ============================ -->
+<section class="slide" id="med-2">
+  <div style="position:absolute; inset:0; background:radial-gradient(800px 500px at 20% 0%, rgba(45,212,191,.2), transparent 60%), #06100f;"></div>
+  <div style="position:absolute; left:80px; top:70px; width:1120px; height:580px; filter:blur(3px); opacity:.55;">
+    <div class="win" style="position:absolute; inset:0; background:#0d1817; border-color:rgba(45,212,191,.2)">
+      <div class="side" style="background:#0a1312">
+        <div class="brand"><span class="logo" style="background:#2dd4bf"><svg class="i"><use href="#pulse"/></svg></span>Med</div>
+        <div class="nav on" style="background:rgba(45,212,191,.14); color:#5eead4"><svg class="i"><use href="#home"/></svg>Overview</div>
+        <div class="nav"><svg class="i"><use href="#cal"/></svg>Appointments</div>
+        <div class="nav"><svg class="i"><use href="#users"/></svg>Patients</div>
+        <div class="nav"><svg class="i"><use href="#file"/></svg>Records</div>
+      </div>
+      <div class="main">
+        <div class="row"><div class="tile" style="height:110px"></div><div class="tile" style="height:110px"></div><div class="tile" style="height:110px"></div></div>
+        <div class="row" style="flex:1"><div class="panel" style="flex:1.4"></div><div class="panel" style="flex:1"></div></div>
+      </div>
+    </div>
+  </div>
+  <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;">
+    <div style="background:rgba(6,16,15,.82); border:1px solid rgba(45,212,191,.35); border-radius:24px; padding:34px 46px; text-align:center; box-shadow:0 30px 80px rgba(0,0,0,.6);">
+      <svg viewBox="0 0 24 24" style="width:44px;height:44px;stroke:#5eead4;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M3 12h4l2.5-6 5 12 2.5-6h4"/></svg>
+      <div style="font-size:38px; font-weight:800; margin-top:10px; color:#f0fdfa">We are building it</div>
+      <div class="mono" style="margin-top:8px; color:#5eead4; font-size:16px">med.kattabaza.uz</div>
+      <div style="margin:22px auto 0; width:320px; height:8px; border-radius:99px; background:rgba(255,255,255,.08); overflow:hidden;"><div style="width:35%; height:100%; background:linear-gradient(90deg,#2dd4bf,#5eead4); border-radius:99px"></div></div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Takrorlanuvchi qatorlar JS bilan chiziladi
+  const shiftRows = [
+    ["AK", "#fdba74", "Aziz Karimov", "DDDDDOO"],
+    ["DR", "#93c5fd", "Dilnoza Rahimova", "DDDDDOO"],
+    ["MY", "#f9a8d4", "Malika Yusupova", "NNNOONN"],
+    ["JA", "#86efac", "Jasur Aliyev", "DDODDDO"],
+    ["ST", "#c4b5fd", "Sardor Tursunov", "OONNNNO"],
+    ["NI", "#fcd34d", "Nodira Ismoilova", "DDDDDDO"],
+    ["BN", "#a5b4fc", "Bekzod Nazarov", "DDDLLLO"],
+  ];
+  document.getElementById("shift-rows").innerHTML = shiftRows.map(([ini, color, name, week]) => `
+    <div style="flex:1; display:grid; grid-template-columns:200px repeat(7,1fr); align-items:center; border-bottom:1px solid rgba(255,255,255,.045);">
+      <div style="padding:0 16px; display:flex; align-items:center; font-size:13px"><span class="av" style="background:${color}">${ini}</span><span class="b">${name}</span></div>
+      ${[...week].map((c, i) => {
+        const today = i === 1 ? "background:rgba(251,146,60,.05);" : "";
+        if (c === "D") return `<div style="height:100%; display:flex; align-items:center; padding:0 5px; ${today}"><div style="width:100%; border-radius:8px; padding:7px 8px; background:rgba(251,146,60,.16); border:1px solid rgba(251,146,60,.35); color:#fdba74; font-size:11px; font-weight:700">09–18</div></div>`;
+        if (c === "N") return `<div style="height:100%; display:flex; align-items:center; padding:0 5px; ${today}"><div style="width:100%; border-radius:8px; padding:7px 8px; background:rgba(96,165,250,.14); border:1px solid rgba(96,165,250,.35); color:#93c5fd; font-size:11px; font-weight:700">20–08</div></div>`;
+        if (c === "L") return `<div style="height:100%; display:flex; align-items:center; padding:0 5px; ${today}"><div style="width:100%; border-radius:8px; padding:7px 8px; background:rgba(161,161,170,.1); border:1px dashed rgba(161,161,170,.35); color:#a1a1aa; font-size:11px; font-weight:700">Leave</div></div>`;
+        return `<div style="height:100%; display:flex; align-items:center; justify-content:center; color:#3f3f46; font-size:11px; font-weight:700; ${today}">off</div>`;
+      }).join("")}
+    </div>`).join("");
+
+  const trailers = [
+    ["53012", "Laredo, TX", "7d 2h", "#f87171", true],
+    ["48877", "Memphis, TN", "6d 9h", "#f87171"],
+    ["XT-2231", "Joliet, IL", "5d 4h", "#f87171"],
+    ["61540", "Atlanta, GA", "3d 18h", "#fbbf24"],
+    ["GT-907", "Dallas, TX", "2d 21h", "#fbbf24"],
+    ["53147", "Houston, TX", "2d 6h", "#fbbf24"],
+    ["47002", "Phoenix, AZ", "no signal", "#a1a1aa"],
+    ["52980", "San Antonio, TX", "moving", "#4ade80"],
+  ];
+  document.getElementById("trailer-list").innerHTML = trailers.map(([id, place, idle, color, sel]) => `
+    <div style="display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:10px; ${sel ? "background:rgba(251,146,60,.12); border:1px solid rgba(251,146,60,.35);" : "border:1px solid transparent;"}">
+      <span style="width:9px; height:9px; border-radius:50%; background:${color}; box-shadow:0 0 10px ${color}"></span>
+      <div style="flex:1; min-width:0"><div class="b mono" style="font-size:13px">${id}</div><div class="muted" style="font-size:11.5px">${place}</div></div>
+      <div class="mono" style="font-size:12.5px; font-weight:700; color:${color}">${idle}</div>
+    </div>`).join("");
+
+  const providers = [
+    ["Spireon FleetLocate", "browser session"],
+    ["SkyBitz", "API"],
+    ["ORBCOMM", "response capture"],
+    ["XTRA Lease", "response capture"],
+    ["GPSTab", "API"],
+  ];
+  document.getElementById("providers").innerHTML = providers.map(([name, mode]) => `
+    <div class="panel" style="width:300px; padding:12px 14px; display:flex; align-items:center; gap:12px;">
+      <span class="logo" style="background:#27272a; color:#fdba74"><svg class="i"><use href="#signal"/></svg></span>
+      <div style="flex:1"><div class="b" style="font-size:14px">${name}</div><div class="muted" style="font-size:11.5px">${mode}</div></div>
+      <span class="pill ok"><span class="dot"></span>ok</span>
+    </div>`).join("");
+</script>
+</body>
+</html>

@@ -20,6 +20,7 @@ export default function ConnectionCard({ t, ipInfo, copiedIp, onCopy }) {
     <div
       role="button"
       tabIndex={0}
+      data-map-anchor
       onClick={openDetails}
       onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && openDetails()}
       className="relative w-full sm:max-w-2xl rounded-lg border border-line bg-surface/30 backdrop-blur-md shadow-popover overflow-hidden cursor-pointer hover:border-primary/40 transition-colors"

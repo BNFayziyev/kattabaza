@@ -115,6 +115,11 @@ body {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
 }
 
+/* Qatlamlar yuklanguncha (yoki xarita uchayotganda) kulrang #ddd emas, mavzu foni ko'rinsin */
+.leaflet-container {
+  background: rgb(var(--color-bg));
+}
+
 .leaflet-control-attribution {
   font-size: 9px !important;
   background: rgba(255, 255, 255, 0.7) !important;

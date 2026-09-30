@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { LANGS } from "../lib/i18n";
+import { SERVICES, serviceUrl } from "../lib/site";
 
 function NavItem({ active, onClick, icon, label }) {
   return (
@@ -74,6 +76,41 @@ function SidebarContent({
             </div>
           </div>
         )}
+
+        <div>
+          <div className="px-3 mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted">
+            {t.services}
+          </div>
+          <div className="flex flex-col gap-0.5">
+            {SERVICES.map((s) =>
+              s.status === "live" ? (
+                <a
+                  key={s.id}
+                  href={serviceUrl(s)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-sm font-medium transition-colors text-muted hover:text-text hover:bg-surface-hover"
+                >
+                  <span aria-hidden="true" className="w-4 text-center">{s.icon}</span>
+                  <span className="truncate flex-1">{t.svc[s.id].name}</span>
+                  <span aria-hidden="true" className="text-[11px]">↗</span>
+                </a>
+              ) : (
+                <div
+                  key={s.id}
+                  aria-disabled="true"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-sm font-medium text-muted/70 cursor-default"
+                >
+                  <span aria-hidden="true" className="w-4 text-center opacity-70">{s.icon}</span>
+                  <span className="truncate flex-1">{t.svc[s.id].name}</span>
+                  <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-surface-hover border border-line">
+                    {t.soon}
+                  </span>
+                </div>
+              )
+            )}
+          </div>
+        </div>
       </div>
 
       <div className="shrink-0 border-t border-line p-2 flex flex-col gap-2">
@@ -86,24 +123,18 @@ function SidebarContent({
           >
             {theme === "dark" ? "🌙" : "☀️"}
           </button>
-          <button
-            type="button"
-            onClick={() => setLang("en")}
-            className={`flex-1 h-8 rounded-md text-xs font-semibold transition-colors ${
-              lang === "en" ? "bg-primary text-on-primary" : "bg-surface-hover text-muted"
-            }`}
-          >
-            EN
-          </button>
-          <button
-            type="button"
-            onClick={() => setLang("ru")}
-            className={`flex-1 h-8 rounded-md text-xs font-semibold transition-colors ${
-              lang === "ru" ? "bg-primary text-on-primary" : "bg-surface-hover text-muted"
-            }`}
-          >
-            RU
-          </button>
+          {LANGS.map((code) => (
+            <button
+              key={code}
+              type="button"
+              onClick={() => setLang(code)}
+              className={`flex-1 h-8 rounded-md text-xs font-semibold transition-colors ${
+                lang === code ? "bg-primary text-on-primary" : "bg-surface-hover text-muted"
+              }`}
+            >
+              {code.toUpperCase()}
+            </button>
+          ))}
         </div>
       </div>
     </div>

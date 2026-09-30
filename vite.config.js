@@ -1,7 +1,15 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+// base "/" — ichki sahifani yangilaganda (/checker, /categories/vpn) fayllar
+// to'g'ri yo'ldan yuklansin. /api so'rovlari lokal serverga (server/index.js) boradi.
 export default defineConfig({
   plugins: [react()],
-  base: "./",
+  base: "/",
+  server: {
+    port: 5173,
+    proxy: {
+      "/api": "http://127.0.0.1:3000",
+    },
+  },
 })

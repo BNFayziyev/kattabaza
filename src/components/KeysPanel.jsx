@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { supabase, getClientId } from "../lib/supabase";
 
 /**
  * XAVFSIZLIK — nima o'zgardi:
@@ -9,10 +8,34 @@ import { supabase, getClientId } from "../lib/supabase";
  *       Network yoki ochiq Google Sheet URL orqali hamma kalitni ko'rish
  *       mumkin edi. Parol algoritmi ham JS bundle ichida edi.
  *
- * YANGI: brauzerda hech qanday kalit yo'q. Parol SERVERDA (Postgres,
- *        bcrypt) tekshiriladi va kalitlar faqat to'g'ri paroldan keyin
- *        `unlock_keys` RPC javobida keladi. Brute-force throttle serverda.
+ * YANGI: brauzerda hech qanday kalit yo'q. Parol lokal SERVERDA
+ *        (server/keys.js) tekshiriladi va kalitlar faqat to'g'ri paroldan
+ *        keyin POST /api/keys/unlock javobida keladi. Urinishlar cheklovi serverda.
  */
+async function requestKeys(password) {
+  try {
+    const res = await fetch("/api/keys/unlock", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password }),
+    });
+    const body = await res.json().catch(() => ({}));
+    if (res.ok) return { data: { ok: true, keys: body.keys } };
+    if (res.status === 401) return { data: { ok: false, reason: "invalid_password" } };
+    if (res.status === 429) {
+      return {
+        data: {
+          ok: false,
+          reason: "too_many_attempts",
+          retry_after_minutes: Math.max(1, Math.ceil((body.retryAfter || 60) / 60)),
+        },
+      };
+    }
+    return { error: new Error(`HTTP ${res.status}`) };
+  } catch (error) {
+    return { error };
+  }
+}
 export default function KeysPanel({ t, showHeaderClose, onClose }) {
   const [helpAdminOpen, setHelpAdminOpen] = useState(false);
   const [keysPassword, setKeysPassword] = useState("");
@@ -29,10 +52,7 @@ export default function KeysPanel({ t, showHeaderClose, onClose }) {
     setBusy(true);
     setKeysPasswordError("");
 
-    const { data, error } = await supabase.rpc("unlock_keys", {
-      p_password: entered,
-      p_client: getClientId(),
-    });
+    const { data, error } = await requestKeys(entered);
 
     setBusy(false);
 

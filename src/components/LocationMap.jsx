@@ -9,19 +9,44 @@ const pulseIcon = L.divIcon({
   iconAnchor: [11, 11],
 });
 
-const TILE_URLS = {
-  light: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-  dark: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-};
-const TILE_SUBDOMAINS = {
-  light: "abc",
-  dark: "abcd",
+// ⚠️ CARTO (basemaps.cartocdn.com) endi API kalit talab qiladi — tungi xarita
+// ustida "API KEY REQUIRED" yozuvi chiqardi. Tungi rejimda Esri'ning kalitsiz
+// "Dark Gray" qatlamlari ishlatiladi (asos + ustidagi nomlar), time.kattabaza.uz dagi kabi.
+const TILE_LAYERS = {
+  light: [{ url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", subdomains: "abc", maxZoom: 19 }],
+  dark: [
+    {
+      url: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+      maxZoom: 16,
+    },
+    {
+      url: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}",
+      maxZoom: 16,
+    },
+  ],
 };
 
 const ZOOM = 4;
 const TOP_OFFSET_RATIO = 0.12; // marker sits ~12% down from the top of the viewport
-const RIGHT_OFFSET_RATIO = 0.8; // marker sits ~80% across from the left of the viewport
+const RIGHT_OFFSET_RATIO = 0.8; // marker sits ~80% across the part of the viewport not covered by the AI panel
+const AI_PANEL_WIDTH = 320; // xl ekranda o'ngdagi AI panel (w-80) xaritani yopadi
 const FLY_DURATION = 1.4; // seconds
+
+const MIN_FREE_SPACE = 150; // kartaning o'ng tomonida belgi uchun kamida shuncha joy bo'lsin
+
+const rightInset = () => (typeof window !== "undefined" && window.innerWidth >= 1280 ? AI_PANEL_WIDTH : 0);
+
+// Belgi (marker) qayerda turadi: IP kartaning (data-map-anchor) o'ng tomonida
+// bo'sh joy bo'lsa — o'sha joyning o'rtasida, bo'lmasa — ko'rinadigan qismning 80% ida.
+function markerX(viewportWidth) {
+  const visibleRight = viewportWidth - rightInset();
+  const anchor = typeof document !== "undefined" && document.querySelector("[data-map-anchor]");
+  if (anchor) {
+    const right = anchor.getBoundingClientRect().right;
+    if (visibleRight - right >= MIN_FREE_SPACE) return (right + visibleRight) / 2;
+  }
+  return visibleRight * RIGHT_OFFSET_RATIO;
+}
 
 export default function LocationMap({ latitude, longitude, label, theme }) {
   const containerRef = useRef(null);
@@ -47,13 +72,12 @@ export default function LocationMap({ latitude, longitude, label, theme }) {
 
     L.control
       .attribution({ prefix: false, position: "bottomright" })
-      .addAttribution("© OpenStreetMap © CARTO")
+      .addAttribution("© OpenStreetMap · Esri, HERE, Garmin")
       .addTo(map);
 
-    tileLayerRef.current = L.tileLayer(TILE_URLS[theme === "dark" ? "dark" : "light"], {
-      subdomains: TILE_SUBDOMAINS[theme === "dark" ? "dark" : "light"],
-      maxZoom: 19,
-    }).addTo(map);
+    tileLayerRef.current = L.layerGroup(
+      TILE_LAYERS[theme === "dark" ? "dark" : "light"].map(({ url, ...opts }) => L.tileLayer(url, opts))
+    ).addTo(map);
 
     mapRef.current = map;
 
@@ -63,7 +87,7 @@ export default function LocationMap({ latitude, longitude, label, theme }) {
 
       const targetPoint = map.project([lat, lon], ZOOM);
       const viewportSize = map.getSize();
-      const offsetX = viewportSize.x * (0.5 - RIGHT_OFFSET_RATIO);
+      const offsetX = viewportSize.x * 0.5 - markerX(viewportSize.x);
       const offsetY = viewportSize.y * (0.5 - TOP_OFFSET_RATIO);
       const shiftedPoint = targetPoint.add([offsetX, offsetY]);
       const offsetCenter = map.unproject(shiftedPoint, ZOOM);
@@ -119,9 +143,12 @@ export default function LocationMap({ latitude, longitude, label, theme }) {
   }, []);
 
   useEffect(() => {
-    if (tileLayerRef.current) {
-      tileLayerRef.current.setUrl(TILE_URLS[theme === "dark" ? "dark" : "light"]);
-    }
+    const group = tileLayerRef.current;
+    if (!group) return;
+    group.clearLayers();
+    TILE_LAYERS[theme === "dark" ? "dark" : "light"].forEach(({ url, ...opts }) =>
+      group.addLayer(L.tileLayer(url, opts))
+    );
   }, [theme]);
 
   useEffect(() => {
