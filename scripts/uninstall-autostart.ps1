@@ -1,4 +1,13 @@
-# KattaBaza avtomatik ishga tushirish vazifasini olib tashlaydi (Administrator sifatida).
+# KattaBaza avtomatik ishga tushirish vazifasini olib tashlaydi.
+# Kerak bo'lsa o'zi Administrator huquqini so'raydi.
+$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
+  [Security.Principal.WindowsBuiltInRole]::Administrator)
+if (-not $isAdmin) {
+  Write-Host "Administrator huquqi kerak - ochilgan UAC oynasida 'Ha' ni bosing..." -ForegroundColor Yellow
+  Start-Process powershell -Verb RunAs -ArgumentList @('-NoExit', '-ExecutionPolicy', 'Bypass', '-File', "`"$PSCommandPath`"")
+  exit
+}
+
 $taskName = 'KattaBaza'
 $existing = Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue
 if ($existing) {
