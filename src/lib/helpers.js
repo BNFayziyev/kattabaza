@@ -26,6 +26,18 @@ export function getFileType(item) {
   return ext?.[1] ? ext[1].toUpperCase() : "FILE";
 }
 
+// Jadvaldagi nomlar fayl nomi ("Chrome.exe") — kengaytma olib tashlanadi.
+// Qo'shimcha katalogda esa haqiqiy nomlar ("Paint.NET", "Node.js") — tegilmaydi.
+export function displayTitle(item) {
+  if (!item.title) return "";
+  return item.source === "extra" ? item.title : item.title.replace(/\.[^/.]+$/, "");
+}
+
+// Telegram tugmasi faqat post haqiqatan Telegram'da bo'lsa chiqadi
+export function telegramLink(item) {
+  return item.file_url && /^https?:\/\/t\.me\//i.test(item.post_link || "") ? item.post_link : "";
+}
+
 export function getCountryName(nameOrCode) {
   if (!nameOrCode) return "";
   const value = String(nameOrCode).trim();

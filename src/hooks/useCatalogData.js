@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { EXTRA_APPS } from "../lib/appCatalog";
 
 /**
  * Catalog data source.
@@ -90,7 +91,8 @@ export function useCatalogData() {
       }
 
       if (!alive) return;
-      setMaterials(result.materials);
+      // Bizning ilovalar doim birinchi, qo'shimcha katalog — ulardan keyin
+      setMaterials([...result.materials, ...EXTRA_APPS]);
       setChannels(result.channels);
       setSource(used);
       setLoading(false);

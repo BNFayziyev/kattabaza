@@ -18,7 +18,7 @@ function SkeletonCard() {
   );
 }
 
-export default function MaterialsGrid({ t, materials, loading, emptyMessage, onOpen }) {
+export default function MaterialsGrid({ t, lang, materials, loading, emptyMessage, onOpen }) {
   if (loading) {
     return (
       <div
@@ -44,7 +44,7 @@ export default function MaterialsGrid({ t, materials, loading, emptyMessage, onO
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {materials.map((item) => (
-        <MaterialCard key={item.id} item={item} onOpen={onOpen} />
+        <MaterialCard key={item.id} t={t} lang={lang} item={item} onOpen={onOpen} />
       ))}
     </div>
   );

@@ -1,3 +1,5 @@
+import { OWNER } from "../lib/site";
+
 export default function Footer({ t }) {
   const year = new Date().getFullYear();
 
@@ -27,11 +29,11 @@ export default function Footer({ t }) {
             {t.footerContact}
           </div>
           <div className="flex flex-col gap-2 text-sm">
-            <a href="https://t.me/BNFayziyev" target="_blank" rel="noreferrer" className="text-text hover:text-primary transition-colors">
-              Telegram — @BNFayziyev
+            <a href={OWNER.telegram} target="_blank" rel="noreferrer" className="text-text hover:text-primary transition-colors">
+              Telegram — @{OWNER.handle}
             </a>
-            <a href="tel:+998995267403" className="text-text hover:text-primary transition-colors">
-              +998 99 526 74 03
+            <a href={`tel:${OWNER.phone}`} className="text-text hover:text-primary transition-colors">
+              {OWNER.phoneDisplay}
             </a>
           </div>
         </div>

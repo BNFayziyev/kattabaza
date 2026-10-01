@@ -123,7 +123,8 @@ src/
   components/      Sidebar, ConnectionCard, IpLookup, LocationMap, AppsBlock,
                    ServiceBlock, Carousel, AssistantPanel, KeysPanel, CheckerPanel, ...
   hooks/           useCatalogData, useIpInfo
-  lib/             i18n, site (servislar), checker, supabase
+  lib/             i18n, site (servislar), checker, supabase,
+                   appCatalog (qo'shimcha dasturlar katalogi — /apps da bizning ilovalardan keyin)
 public/slides/     karusel rasmlari (oq va qora)
 public/map/        orqa fon xaritasi (oq va qora)
 scripts/           dev.js, start.cmd, install-autostart.ps1

@@ -1,11 +1,14 @@
-import { getFileType } from "../lib/helpers";
+import { displayTitle, getFileType, telegramLink } from "../lib/helpers";
 import Icon from "./Icon";
 
 const PREVIEW_COUNT = 6;
 
-function AppRow({ item, onOpen }) {
-  const fileType = getFileType(item);
-  const title = item.title ? item.title.replace(/\.[^/.]+$/, "") : "";
+function AppRow({ t, item, onOpen }) {
+  const first = item.versions?.[0];
+  const fileType = first?.type || getFileType(item);
+  const title = displayTitle(item);
+  const size = item.size_mb ? `${item.size_mb} MB` : first?.size;
+  const tgLink = telegramLink(item);
 
   return (
     <li className="flex items-center gap-3 rounded-md px-2 py-2 hover:bg-surface-hover/60 transition-colors">
@@ -18,29 +21,29 @@ function AppRow({ item, onOpen }) {
       )}
       <button
         type="button"
-        onClick={() => onOpen(item.post_link)}
+        onClick={() => onOpen(item.post_link || item.file_url)}
         className="min-w-0 flex-1 text-left"
       >
         <div className="text-sm font-semibold text-text hover:text-primary transition-colors truncate">{title}</div>
         <div className="text-[11px] font-mono text-muted truncate">
           {fileType}
-          {item.size_mb ? ` · ${item.size_mb} MB` : ""}
+          {size ? ` · ${size}` : ""}
         </div>
       </button>
       <div className="flex items-center gap-1.5 shrink-0">
         <button
           type="button"
           onClick={() => (item.file_url ? onOpen(item.file_url) : onOpen(item.post_link))}
-          aria-label={`Download ${title}`}
-          title="Download"
+          aria-label={`${t.download} ${title}`}
+          title={t.download}
           className="w-8 h-8 rounded-md border border-primary text-primary flex items-center justify-center hover:bg-primary/10 transition-colors"
         >
           <Icon name="download" size={15} strokeWidth={2} />
         </button>
-        {item.file_url && (
+        {tgLink && (
           <button
             type="button"
-            onClick={() => onOpen(item.post_link)}
+            onClick={() => onOpen(tgLink)}
             aria-label="Open in Telegram"
             title="Telegram"
             className="w-8 h-8 rounded-md bg-blue-600 flex items-center justify-center hover:bg-blue-700 transition-colors"
@@ -53,7 +56,8 @@ function AppRow({ item, onOpen }) {
   );
 }
 
-// Bosh sahifadagi "Ilovalar" bloki — ro'yxatning boshidagi materiallar (jadval tartibida)
+// Bosh sahifadagi "Ilovalar" bloki — ro'yxatning boshidagi materiallar (jadval tartibida;
+// qo'shimcha katalog ro'yxat oxirida turadi, shuning uchun bu yerda bizning ilovalar chiqadi)
 export default function AppsBlock({ t, materials, loading, popularCategories, onOpen, onViewAll, onSelectCategory }) {
   const latest = materials.slice(0, PREVIEW_COUNT);
 
@@ -96,7 +100,7 @@ export default function AppsBlock({ t, materials, loading, popularCategories, on
         ) : (
           <ul className="-mx-1">
             {latest.map((item) => (
-              <AppRow key={item.id} item={item} onOpen={onOpen} />
+              <AppRow key={item.id} t={t} item={item} onOpen={onOpen} />
             ))}
           </ul>
         )}

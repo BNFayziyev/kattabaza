@@ -12,6 +12,8 @@ import ConnectionCard from "./components/ConnectionCard";
 import LocationMap from "./components/LocationMap";
 import SearchBar from "./components/SearchBar";
 import MaterialsGrid from "./components/MaterialsGrid";
+import AppsCatalog from "./components/AppsCatalog";
+import ProfileView from "./components/ProfileView";
 import ChannelsCategoriesView from "./components/ChannelsCategoriesView";
 import CheckerPanel from "./components/CheckerPanel";
 import IpLookup from "./components/IpLookup";
@@ -20,6 +22,7 @@ import ServiceBlock from "./components/ServiceBlock";
 import AssistantPanel from "./components/AssistantPanel";
 import { LANGS } from "./lib/i18n";
 import { SERVICES } from "./lib/site";
+import { APP_SECTIONS, sectionOf } from "./lib/appCatalog";
 
 function initialTheme() {
   if (typeof window === "undefined") return "light";
@@ -45,7 +48,9 @@ export default function App() {
   // Har oshganda xaritada samolyot uchadi (refresh yoki qidiruv bosilganda)
   const [flightId, setFlightId] = useState(0);
 
-  const [view, setView] = useState("home"); // home | apps | categories | channel | category | checker
+  const [view, setView] = useState("home"); // home | apps | categories | channel | category | checker | profile
+  // /apps/<bo'lim> — null bo'lsa "Hammasi"
+  const [appSection, setAppSection] = useState(null);
   const [selectedChannel, setSelectedChannel] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [activeTab, setActiveTab] = useState("home");
@@ -84,10 +89,21 @@ export default function App() {
       return;
     }
 
+    // Profil sahifasi ham kanallarga bog'liq emas
+    if (parts[0] === "profile") {
+      setView("profile");
+      setActiveTab("profile");
+      setSelectedChannel(null);
+      setSelectedCategory(null);
+      return;
+    }
+
     // Barcha ilovalar ro'yxati ham kanallarga bog'liq emas
     if (parts[0] === "apps") {
+      const sec = parts[1] && APP_SECTIONS.some((s) => s.id === parts[1]) ? parts[1] : null;
       setView("apps");
-      setActiveTab("home");
+      setActiveTab("apps");
+      setAppSection(sec);
       setSelectedChannel(null);
       setSelectedCategory(null);
       return;
@@ -169,8 +185,16 @@ export default function App() {
       navigate("/checker");
       return;
     }
+    if (tab === "profile") {
+      setView("profile");
+      setActiveTab("profile");
+      navigate("/profile");
+      return;
+    }
     setActiveTab(tab);
   };
+
+  const handleSelectAppSection = (id) => navigate(id ? `/apps/${id}` : "/apps");
 
   const handleSelectChannel = (ch) => {
     setSelectedChannel(ch);
@@ -216,7 +240,7 @@ export default function App() {
     const query = searchQuery.trim().toLowerCase();
     if (query) {
       list = list.filter((m) =>
-        [m.title, m.description].filter(Boolean).some((field) =>
+        [m.title, m.description, ...Object.values(m.descriptions || {})].filter(Boolean).some((field) =>
           String(field).toLowerCase().includes(query)
         )
       );
@@ -227,6 +251,15 @@ export default function App() {
 
   const homeServices = SERVICES.filter((s) => s.home);
   const showBlocks = view === "home" && !searchQuery.trim();
+  // Chap menyudagi "Ilovalar" bo'limlari va ulardagi soni
+  const appGroups = useMemo(
+    () =>
+      APP_SECTIONS.map((s) => ({
+        ...s,
+        count: materials.filter((m) => sectionOf(m) === s.id).length,
+      })).filter((g) => loading || g.count > 0),
+    [materials, loading]
+  );
   const mapTarget = lookupFocus || {
     latitude: ipInfo.latitude,
     longitude: ipInfo.longitude,
@@ -255,6 +288,11 @@ export default function App() {
         onNavigate={handleNavigate}
         onSelectChannel={handleSelectChannel}
         onOpenKeys={() => setKeysOpen(true)}
+        appGroups={appGroups}
+        appsTotal={materials.length}
+        appSection={appSection}
+        onOpenApps={() => navigate("/apps")}
+        onSelectAppSection={handleSelectAppSection}
       />
 
       <main className="relative z-10 flex-1 w-full max-w-6xl mx-auto px-4 md:px-6 py-6 flex flex-col gap-5">
@@ -278,7 +316,7 @@ export default function App() {
             setFlightId((n) => n + 1);
           }}
         />
-        {view !== "checker" && (
+        {view !== "checker" && view !== "profile" && (
           <SearchBar value={searchQuery} onChange={setSearchQuery} placeholder={t.search} />
         )}
 
@@ -302,6 +340,8 @@ export default function App() {
 
         {view === "checker" && <CheckerPanel lang={lang} />}
 
+        {view === "profile" && <ProfileView t={t} />}
+
         {view === "categories" && (
           <ChannelsCategoriesView
             t={t}
@@ -313,9 +353,23 @@ export default function App() {
           />
         )}
 
-        {((view === "home" && !showBlocks) || view === "apps" || view === "channel" || view === "category") && (
+        {view === "apps" && (
+          <AppsCatalog
+            t={t}
+            lang={lang}
+            materials={visibleMaterials}
+            loading={loading}
+            section={appSection}
+            emptyMessage={searchQuery.trim() ? t.noSearchResults : t.noMaterials}
+            onSelectSection={handleSelectAppSection}
+            onOpen={openHandler}
+          />
+        )}
+
+        {((view === "home" && !showBlocks) || view === "channel" || view === "category") && (
           <MaterialsGrid
             t={t}
+            lang={lang}
             materials={visibleMaterials}
             loading={loading}
             emptyMessage={searchQuery.trim() ? t.noSearchResults : t.noMaterials}
@@ -326,7 +380,15 @@ export default function App() {
 
       <Footer t={t} />
 
-      <KeysModal open={keysOpen} onClose={() => setKeysOpen(false)} t={t} />
+      <KeysModal
+        open={keysOpen}
+        onClose={() => setKeysOpen(false)}
+        onOpenProfile={() => {
+          setKeysOpen(false);
+          navigate("/profile");
+        }}
+        t={t}
+      />
 
       <AssistantPanel t={t} />
     </div>

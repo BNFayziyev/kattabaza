@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LANGS } from "../lib/i18n";
-import { SERVICES, serviceUrl } from "../lib/site";
+import { OWNER, SERVICES, serviceUrl } from "../lib/site";
 import Icon from "./Icon";
 
 function NavItem({ active, onClick, icon, label }) {
@@ -18,6 +18,77 @@ function NavItem({ active, onClick, icon, label }) {
   );
 }
 
+function SubItem({ active, onClick, icon, label, count }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md text-[13px] font-medium transition-colors text-left ${
+        active ? "bg-primary-soft text-primary" : "text-muted hover:text-text hover:bg-surface-hover"
+      }`}
+    >
+      <Icon name={icon} size={14} />
+      <span className="truncate flex-1">{label}</span>
+      {count > 0 && <span className="text-[11px] font-mono opacity-70">{count}</span>}
+    </button>
+  );
+}
+
+// "Ilovalar" — bosilganda pastga ochiladi: Hammasi + bo'limlar (filtr)
+function AppsMenu({ t, active, section, groups, total, onOpenApps, onSelectSection }) {
+  const [open, setOpen] = useState(active);
+  useEffect(() => {
+    if (active) setOpen(true);
+  }, [active]);
+
+  const toggle = () => {
+    if (!active) {
+      setOpen(true);
+      onOpenApps();
+    } else {
+      setOpen((v) => !v);
+    }
+  };
+
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={toggle}
+        aria-expanded={open}
+        className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-sm font-medium transition-colors text-left ${
+          active ? "bg-primary-soft text-primary" : "text-muted hover:text-text hover:bg-surface-hover"
+        }`}
+      >
+        <Icon name="box" />
+        <span className="truncate flex-1">{t.apps}</span>
+        <Icon name="chevronDown" size={14} className={`transition-transform ${open ? "rotate-180" : ""}`} />
+      </button>
+      {open && (
+        <div className="ml-5 mt-0.5 pl-2 border-l border-line flex flex-col gap-0.5">
+          <SubItem
+            active={active && !section}
+            onClick={() => onSelectSection(null)}
+            icon="folder"
+            label={t.all}
+            count={total}
+          />
+          {groups.map((g) => (
+            <SubItem
+              key={g.id}
+              active={active && section === g.id}
+              onClick={() => onSelectSection(g.id)}
+              icon={g.icon}
+              label={t.appSections[g.id]}
+              count={g.count}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function SidebarContent({
   t,
   theme,
@@ -30,6 +101,11 @@ function SidebarContent({
   onNavigate,
   onSelectChannel,
   onOpenKeys,
+  appGroups,
+  appsTotal,
+  appSection,
+  onOpenApps,
+  onSelectAppSection,
 }) {
   return (
     <div className="flex flex-col h-full">
@@ -45,6 +121,15 @@ function SidebarContent({
       <div className="flex-1 overflow-auto scrollbar-thin px-2 py-3 flex flex-col gap-4">
         <div className="flex flex-col gap-0.5">
           <NavItem active={activeTab === "home"} onClick={() => onNavigate("home")} icon="home" label={t.home} />
+          <AppsMenu
+            t={t}
+            active={activeTab === "apps"}
+            section={appSection}
+            groups={appGroups}
+            total={appsTotal}
+            onOpenApps={onOpenApps}
+            onSelectSection={onSelectAppSection}
+          />
           <NavItem
             active={activeTab === "categories"}
             onClick={() => onNavigate("categories")}
@@ -115,6 +200,26 @@ function SidebarContent({
       </div>
 
       <div className="shrink-0 border-t border-line p-2 flex flex-col gap-2">
+        <button
+          type="button"
+          onClick={() => onNavigate("profile")}
+          className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded-md transition-colors text-left ${
+            activeTab === "profile" ? "bg-primary-soft" : "hover:bg-surface-hover"
+          }`}
+        >
+          <img
+            src={OWNER.avatar}
+            alt=""
+            className="w-8 h-8 rounded-full object-cover ring-1 ring-primary/40 shrink-0"
+          />
+          <span className="min-w-0 flex-1">
+            <span className={`block text-sm font-semibold truncate ${activeTab === "profile" ? "text-primary" : "text-text"}`}>
+              {OWNER.name}
+            </span>
+            <span className="block text-[11px] font-mono text-muted truncate">@{OWNER.handle}</span>
+          </span>
+          <Icon name="chevronRight" size={14} className="text-muted" />
+        </button>
         <NavItem onClick={onOpenKeys} icon="key" label={t.contactPanel} />
         <div className="flex items-center gap-1.5 px-1">
           <button
@@ -164,6 +269,14 @@ export default function Sidebar(props) {
         <div className="flex items-center gap-2">
           <button
             type="button"
+            onClick={() => onNavigate("profile")}
+            aria-label={t.profile}
+            className="w-8 h-8 rounded-full overflow-hidden ring-1 ring-primary/40"
+          >
+            <img src={OWNER.avatar} alt="" className="w-full h-full object-cover" />
+          </button>
+          <button
+            type="button"
             onClick={onOpenKeys}
             aria-label={t.contactPanel}
             className="w-8 h-8 rounded-md flex items-center justify-center bg-surface-hover text-sm"
@@ -203,6 +316,10 @@ export default function Sidebar(props) {
               }}
               onOpenKeys={() => {
                 onOpenKeys();
+                setMobileOpen(false);
+              }}
+              onSelectAppSection={(id) => {
+                props.onSelectAppSection(id);
                 setMobileOpen(false);
               }}
             />

@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { OWNER } from "../lib/site";
+import Icon from "./Icon";
 
 /**
  * XAVFSIZLIK — nima o'zgardi:
@@ -36,8 +38,7 @@ async function requestKeys(password) {
     return { error };
   }
 }
-export default function KeysPanel({ t, showHeaderClose, onClose }) {
-  const [helpAdminOpen, setHelpAdminOpen] = useState(false);
+export default function KeysPanel({ t, showHeaderClose, onClose, onOpenProfile }) {
   const [keysPassword, setKeysPassword] = useState("");
   const [isKeysUnlocked, setIsKeysUnlocked] = useState(false);
   const [keysPasswordError, setKeysPasswordError] = useState("");
@@ -117,54 +118,47 @@ export default function KeysPanel({ t, showHeaderClose, onClose }) {
         </div>
       )}
 
-      <div className="rounded-lg border border-line bg-surface-hover p-4 flex flex-col items-center gap-3 shrink-0">
-        <img
-          src="https://github.com/BNFayziyev.png"
-          alt="Profile"
-          className="w-14 h-14 rounded-full object-cover border-2 border-surface"
-        />
-        {!helpAdminOpen ? (
-          <button
-            type="button"
-            onClick={() => setHelpAdminOpen(true)}
-            className="w-full px-4 py-2.5 rounded-md text-sm font-semibold bg-primary text-on-primary hover:bg-primary-hover transition-colors"
-          >
-            {t.helpAdmin}
-          </button>
-        ) : (
-          <div className="w-full space-y-3 text-left">
-            <div className="text-sm font-bold text-text">+998995267403</div>
-            <div className="text-xs text-muted">@BNFayziyev</div>
-            <div className="flex flex-wrap gap-2 text-xs">
-              <a href="tel:+998995267403" className="px-2.5 py-1 rounded-md bg-text text-bg font-semibold">
-                Call
-              </a>
-              <a
-                href="https://t.me/BNFayziyev"
-                target="_blank"
-                rel="noreferrer"
-                className="px-2.5 py-1 rounded-md bg-blue-600 text-white font-semibold"
-              >
-                Telegram
-              </a>
-              <a
-                href="https://instagram.com/BNFayziyev"
-                target="_blank"
-                rel="noreferrer"
-                className="px-2.5 py-1 rounded-md bg-pink-600 text-white font-semibold"
-              >
-                Instagram
-              </a>
-            </div>
+      {/* Qisqa profil — to'liq profil alohida sahifada (/profile) */}
+      <div className="rounded-lg border border-line bg-surface-hover p-3 flex flex-col gap-3 shrink-0">
+        <div className="flex items-center gap-3">
+          <img
+            src={OWNER.avatar}
+            alt={OWNER.name}
+            className="w-12 h-12 rounded-full object-cover border-2 border-surface ring-2 ring-primary/40"
+          />
+          <div className="min-w-0 flex-1">
+            <div className="text-sm font-bold text-text truncate">{OWNER.name}</div>
+            <div className="text-xs font-mono text-muted truncate">@{OWNER.handle}</div>
+          </div>
+          {onOpenProfile && (
             <button
               type="button"
-              onClick={() => setHelpAdminOpen(false)}
-              className="text-xs text-muted underline"
+              onClick={onOpenProfile}
+              className="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold text-primary hover:bg-primary/10 transition-colors"
             >
-              {t.hideDetails}
+              {t.profile}
+              <Icon name="arrowRight" size={14} />
             </button>
-          </div>
-        )}
+          )}
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <a
+            href={OWNER.telegram}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-md text-sm font-semibold bg-primary text-on-primary hover:bg-primary-hover transition-colors"
+          >
+            <Icon name="send" />
+            {t.helpAdmin}
+          </a>
+          <a
+            href={`tel:${OWNER.phone}`}
+            className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-md text-sm font-semibold border border-primary text-primary hover:bg-primary/10 transition-colors"
+          >
+            <Icon name="call" />
+            {t.call}
+          </a>
+        </div>
       </div>
 
       <div className="rounded-lg border border-line bg-surface p-3 shrink-0">

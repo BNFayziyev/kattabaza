@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import KeysPanel from "./KeysPanel";
 
-export default function KeysModal({ open, onClose, t }) {
+export default function KeysModal({ open, onClose, onOpenProfile, t }) {
   useEffect(() => {
     if (!open) return;
     const onKeyDown = (e) => e.key === "Escape" && onClose();
@@ -21,7 +21,7 @@ export default function KeysModal({ open, onClose, t }) {
       />
       <div className="relative w-full sm:max-w-md max-h-[85vh] bg-surface border border-line rounded-t-lg sm:rounded-lg shadow-popover flex flex-col overflow-hidden animate-fade-in-up">
         <div className="p-4 flex flex-col min-h-0 flex-1">
-          <KeysPanel t={t} showHeaderClose onClose={onClose} />
+          <KeysPanel t={t} showHeaderClose onClose={onClose} onOpenProfile={onOpenProfile} />
         </div>
       </div>
     </div>

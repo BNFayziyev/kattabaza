@@ -132,6 +132,71 @@ const PATHS = {
     </>
   ),
   dot: <circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" />,
+
+  chevronDown: <path d="m6 9.5 6 6 6-6" />,
+  user: (
+    <>
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4.5 20.5a7.5 7.5 0 0 1 15 0" />
+    </>
+  ),
+  call: (
+    <path d="M20.5 16.4v2.6a1.8 1.8 0 0 1-2 1.8 17.8 17.8 0 0 1-7.8-2.8 17.5 17.5 0 0 1-5.4-5.4 17.8 17.8 0 0 1-2.8-7.8A1.8 1.8 0 0 1 4.3 3h2.6a1.8 1.8 0 0 1 1.8 1.5c.1.9.3 1.7.6 2.5a1.8 1.8 0 0 1-.4 1.9L7.8 10a14.4 14.4 0 0 0 5.4 5.4l1.1-1.1a1.8 1.8 0 0 1 1.9-.4c.8.3 1.6.5 2.5.6a1.8 1.8 0 0 1 1.8 1.9z" />
+  ),
+
+  // Ijtimoiy tarmoqlar (soddalashtirilgan, chiziqli uslubda)
+  instagram: (
+    <>
+      <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <path d="M17 7v.2" />
+    </>
+  ),
+  threads: (
+    <>
+      <path d="M19 12a7 7 0 1 0-2.8 5.6" />
+      <path d="M15.5 12a3.5 3.5 0 1 1-1-2.5V13a2 2 0 0 0 4 0v-1" />
+    </>
+  ),
+
+  // Ilovalar katalogi bo'limlari
+  monitor: (
+    <>
+      <rect x="3" y="4.5" width="18" height="12" rx="1.5" />
+      <path d="M8.5 20h7M12 16.5V20" />
+    </>
+  ),
+  fileText: (
+    <>
+      <path d="M14 3.5H7A1.5 1.5 0 0 0 5.5 5v14A1.5 1.5 0 0 0 7 20.5h10a1.5 1.5 0 0 0 1.5-1.5V8z" />
+      <path d="M14 3.5V8h4.5M9 12.5h6M9 16h6" />
+    </>
+  ),
+  code: <path d="m8.5 7.5-5 4.5 5 4.5M15.5 7.5l5 4.5-5 4.5M13.5 5l-3 14" />,
+  cpu: (
+    <>
+      <rect x="6.5" y="6.5" width="11" height="11" rx="1.5" />
+      <path d="M9.5 9.5h5v5h-5zM9.5 3v3.5M14.5 3v3.5M9.5 17.5V21M14.5 17.5V21M3 9.5h3.5M3 14.5h3.5M17.5 9.5H21M17.5 14.5H21" />
+    </>
+  ),
+  film: (
+    <>
+      <rect x="3.5" y="4.5" width="17" height="15" rx="2" />
+      <path d="m10 9 5 3-5 3z" />
+    </>
+  ),
+  phone: (
+    <>
+      <rect x="6.5" y="2.5" width="11" height="19" rx="2" />
+      <path d="M10.5 18.5h3" />
+    </>
+  ),
+  gamepad: (
+    <>
+      <path d="M7 8h10a4.5 4.5 0 0 1 4.4 5.4l-.7 3.4a2 2 0 0 1-3.4 1L15 15.5H9l-2.3 2.3a2 2 0 0 1-3.4-1l-.7-3.4A4.5 4.5 0 0 1 7 8z" />
+      <path d="M8 10.5v3M6.5 12h3M15.5 11.5v.2M17.5 13v.2" />
+    </>
+  ),
 };
 
 export default function Icon({ name, size = 16, className = "", strokeWidth = 1.8, title }) {
