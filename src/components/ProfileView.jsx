@@ -46,7 +46,6 @@ export default function ProfileView({ t }) {
               </span>
             </div>
           </div>
-          <p className="text-sm text-muted max-w-xl">{t.profileBio}</p>
           <div className="flex flex-wrap justify-center sm:justify-start gap-2">
             <a
               href={OWNER.telegram}

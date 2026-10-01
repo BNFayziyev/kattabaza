@@ -98,7 +98,6 @@ export const translations = {
 
     // Profil
     profileRole: "Developer · KattaBaza",
-    profileBio: "I build KattaBaza and its services — Time and Treyler. Write to me about access keys, VPN setup or anything on the site.",
     contacts: "Contacts",
     phone: "Phone",
     socials: "Social networks",
@@ -248,7 +247,6 @@ export const translations = {
 
     // Profil
     profileRole: "Dasturchi · KattaBaza",
-    profileBio: "KattaBaza va uning servislari — Time va Treyler’ni yarataman. Kalitlar, VPN sozlash yoki sayt bo‘yicha savol bo‘lsa — yozing.",
     contacts: "Aloqa",
     phone: "Telefon",
     socials: "Ijtimoiy tarmoqlar",
@@ -397,7 +395,6 @@ export const translations = {
 
     // Profil
     profileRole: "Разработчик · KattaBaza",
-    profileBio: "Создаю KattaBaza и её сервисы — Time и Treyler. Пишите по ключам доступа, настройке VPN или любым вопросам по сайту.",
     contacts: "Контакты",
     phone: "Телефон",
     socials: "Соцсети",
