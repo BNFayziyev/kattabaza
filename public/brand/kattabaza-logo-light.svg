@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" width="1200" height="320">
+  <title>KattaBaza</title>
+  <style>@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&amp;display=swap');
+    text{font-family:'Baloo 2',system-ui,sans-serif;font-weight:800;font-size:178px;letter-spacing:-3px}</style>
+  <g transform="translate(40 40) scale(0.46875)">
+    <rect width="512" height="512" rx="112" fill="#0B0B0C"/>
+    <g fill="#F86501"><rect x="120" y="96" width="80" height="320" rx="4"/><rect x="200" y="208" width="48" height="96"/><rect x="248" y="160" width="48" height="48"/><rect x="296" y="112" width="48" height="48"/><rect x="248" y="304" width="48" height="48"/><rect x="296" y="352" width="48" height="64"/></g><rect x="360" y="368" width="48" height="48" rx="6" fill="#FFFFFF"/>
+  </g>
+  <text x="318" y="222"><tspan fill="#111114">Katta</tspan><tspan fill="#F86501">Baza</tspan></text>
+</svg>

@@ -1,0 +1,10 @@
+import { chromium } from "playwright-core";
+import { readFileSync } from "node:fs";
+const [,, src, out, w, h] = process.argv;
+const b = await chromium.launch();
+const p = await b.newPage({ viewport: { width: +w, height: +h } });
+await p.setContent(`<html><body style="margin:0;background:transparent">${readFileSync(src, "utf8")}</body></html>`);
+await p.evaluate(() => document.fonts.ready);
+await p.waitForTimeout(400);
+await p.screenshot({ path: out, omitBackground: true, clip: { x: 0, y: 0, width: +w, height: +h } });
+await b.close();

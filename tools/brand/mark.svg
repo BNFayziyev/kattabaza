@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <title>KattaBaza</title>
+  <rect width="512" height="512" rx="112" fill="#0B0B0C"/>
+  <g fill="#F86501">
+    <!-- K: ustun + piksel zinapoyalar (asl logodagi kvadratlardan) -->
+    <rect x="120" y="96" width="80" height="320" rx="4"/>
+    <rect x="200" y="208" width="48" height="96"/>
+    <rect x="248" y="160" width="48" height="48"/>
+    <rect x="296" y="112" width="48" height="48"/>
+    <rect x="248" y="304" width="48" height="48"/>
+    <rect x="296" y="352" width="48" height="64"/>
+  </g>
+  <!-- ".uz" nuqtasi -->
+  <rect x="360" y="368" width="48" height="48" rx="6" fill="#FFFFFF"/>
+</svg>
