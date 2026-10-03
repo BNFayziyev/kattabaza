@@ -130,6 +130,7 @@ const TYPES = {
   ".webp": "image/webp",
   ".ico": "image/x-icon",
   ".woff2": "font/woff2",
+  ".webmanifest": "application/manifest+json; charset=utf-8",
 };
 
 async function fileAt(pathname) {
