@@ -197,6 +197,64 @@ const PATHS = {
       <path d="M8 10.5v3M6.5 12h3M15.5 11.5v.2M17.5 13v.2" />
     </>
   ),
+
+  // MikroTik bo'limi
+  router: (
+    <>
+      <rect x="3" y="13" width="18" height="7" rx="1.5" />
+      <path d="M7 16.5h.01M10.5 16.5h.01M14.5 16.5h3M12 13V9" />
+      <path d="M9.2 7a4 4 0 0 1 5.6 0M6.9 4.7a7.3 7.3 0 0 1 10.2 0" />
+    </>
+  ),
+  terminal: (
+    <>
+      <rect x="3" y="4.5" width="18" height="15" rx="2" />
+      <path d="m7 9.5 3 2.5-3 2.5M12.5 15h4.5" />
+    </>
+  ),
+  help: (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M9.6 9.6a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.1-2.4 3.6M12 17v.2" />
+    </>
+  ),
+  wifi: (
+    <>
+      <path d="M3 9.2a13 13 0 0 1 18 0M6 12.6a8.5 8.5 0 0 1 12 0M9 16a4.2 4.2 0 0 1 6 0" />
+      <path d="M12 19.3v.2" />
+    </>
+  ),
+  network: (
+    <>
+      <rect x="9" y="3" width="6" height="5" rx="1" />
+      <rect x="3" y="16" width="6" height="5" rx="1" />
+      <rect x="15" y="16" width="6" height="5" rx="1" />
+      <path d="M12 8v5.5M6 16v-2.5h12V16" />
+    </>
+  ),
+  sliders: (
+    <>
+      <path d="M4 7h10M18 7h2M4 17h4M12 17h8" />
+      <circle cx="16" cy="7" r="2" />
+      <circle cx="10" cy="17" r="2" />
+    </>
+  ),
+  plus: <path d="M12 5v14M5 12h14" />,
+  trash: (
+    <path d="M4.5 7h15M9.5 7V5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v2M6.5 7l1 12.5A1.5 1.5 0 0 0 9 21h6a1.5 1.5 0 0 0 1.5-1.5L17.5 7" />
+  ),
+  eye: (
+    <>
+      <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" />
+      <circle cx="12" cy="12" r="3" />
+    </>
+  ),
+  eyeOff: (
+    <>
+      <path d="M10.6 5.6A9.6 9.6 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a16 16 0 0 1-2.4 3.2M6.6 6.6A15.6 15.6 0 0 0 2.5 12S6 18.5 12 18.5a9.4 9.4 0 0 0 5.4-1.6" />
+      <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2M3.5 3.5l17 17" />
+    </>
+  ),
 };
 
 export default function Icon({ name, size = 16, className = "", strokeWidth = 1.8, title }) {

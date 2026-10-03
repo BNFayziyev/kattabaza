@@ -3,15 +3,32 @@ import { LANGS } from "../lib/i18n";
 import { OWNER, SERVICES, serviceUrl } from "../lib/site";
 import Icon from "./Icon";
 
-function NavItem({ active, onClick, icon, label }) {
+// href berilsa — haqiqiy <a> (Google havolani ko'radi, sitelinks uchun kerak),
+// oddiy bosishda esa SPA ichida o'tadi; Ctrl/o'rta tugma — yangi tabda.
+const plainClick = (e) => !(e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey);
+
+function NavItem({ active, onClick, icon, label, href }) {
+  const className = `w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-sm font-medium transition-colors text-left ${
+    active ? "bg-primary-soft text-primary" : "text-muted hover:text-text hover:bg-surface-hover"
+  }`;
+  if (href) {
+    return (
+      <a
+        href={href}
+        onClick={(e) => {
+          if (!plainClick(e)) return;
+          e.preventDefault();
+          onClick();
+        }}
+        className={className}
+      >
+        <Icon name={icon} />
+        <span className="truncate">{label}</span>
+      </a>
+    );
+  }
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-sm font-medium transition-colors text-left ${
-        active ? "bg-primary-soft text-primary" : "text-muted hover:text-text hover:bg-surface-hover"
-      }`}
-    >
+    <button type="button" onClick={onClick} className={className}>
       <Icon name={icon} />
       <span className="truncate">{label}</span>
     </button>
@@ -52,9 +69,13 @@ function AppsMenu({ t, active, section, groups, total, onOpenApps, onSelectSecti
 
   return (
     <div>
-      <button
-        type="button"
-        onClick={toggle}
+      <a
+        href="/apps"
+        onClick={(e) => {
+          if (!plainClick(e)) return;
+          e.preventDefault();
+          toggle();
+        }}
         aria-expanded={open}
         className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-sm font-medium transition-colors text-left ${
           active ? "bg-primary-soft text-primary" : "text-muted hover:text-text hover:bg-surface-hover"
@@ -63,7 +84,7 @@ function AppsMenu({ t, active, section, groups, total, onOpenApps, onSelectSecti
         <Icon name="box" />
         <span className="truncate flex-1">{t.apps}</span>
         <Icon name="chevronDown" size={14} className={`transition-transform ${open ? "rotate-180" : ""}`} />
-      </button>
+      </a>
       {open && (
         <div className="ml-5 mt-0.5 pl-2 border-l border-line flex flex-col gap-0.5">
           <SubItem
@@ -120,7 +141,7 @@ function SidebarContent({
 
       <div className="flex-1 overflow-auto scrollbar-thin px-2 py-3 flex flex-col gap-4">
         <div className="flex flex-col gap-0.5">
-          <NavItem active={activeTab === "home"} onClick={() => onNavigate("home")} icon="home" label={t.home} />
+          <NavItem active={activeTab === "home"} onClick={() => onNavigate("home")} href="/" icon="home" label={t.home} />
           <AppsMenu
             t={t}
             active={activeTab === "apps"}
@@ -132,15 +153,21 @@ function SidebarContent({
           />
           <NavItem
             active={activeTab === "categories"}
-            onClick={() => onNavigate("categories")}
+            onClick={() => onNavigate("categories")} href="/categories"
             icon="folder"
             label={t.categories}
           />
           <NavItem
             active={activeTab === "checker"}
-            onClick={() => onNavigate("checker")}
+            onClick={() => onNavigate("checker")} href="/checker"
             icon="shield"
             label={t.checker}
+          />
+          <NavItem
+            active={activeTab === "mikrotik"}
+            onClick={() => onNavigate("mikrotik")} href="/mikrotik"
+            icon="router"
+            label={t.mikrotik}
           />
         </div>
 

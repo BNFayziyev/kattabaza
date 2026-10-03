@@ -25,6 +25,16 @@ Supabase, userbot va migratsiya bo'yicha qo'llanma — [SETUP.md](SETUP.md).
 
 Tarjimalar: `src/lib/i18n.js`. Servislar ro'yxati (yangi subdomen shu yerga): `src/lib/site.js`.
 
+## MikroTik sozlash (`/mikrotik`)
+
+- Forma: model, RouterOS v6/v7, WAN (DHCP / statik IP / PPPoE, VLAN, MAC klon, DNS), LAN va DHCP server,
+  Wi-Fi (wireless yoki wifi drayveri), firewall, xizmatlarni yopish, admin paroli, port ochish,
+  tezlik cheklovi, Cloud DDNS, NTP, zaxira nusxa.
+- Natija: har bo'lim uchun terminal buyruqlari **yoki** Winbox'dagi qadamlar; `kattabaza.rsc` faylini yuklab olish.
+- `/mikrotik/faq` — 29 ta ko'p beriladigan savol (qidiruv bilan).
+- Hammasi brauzerda hisoblanadi; forma `localStorage`da saqlanadi, parollar saqlanmaydi.
+- Generator: `src/lib/mikrotik.js`, matnlar (EN/UZ/RU) va FAQ: `src/lib/mikrotikI18n.js`.
+
 ## Ishga tushirish
 
 Node.js 22+ kerak.

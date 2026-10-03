@@ -16,6 +16,7 @@ import AppsCatalog from "./components/AppsCatalog";
 import ProfileView from "./components/ProfileView";
 import ChannelsCategoriesView from "./components/ChannelsCategoriesView";
 import CheckerPanel from "./components/CheckerPanel";
+import MikrotikPanel from "./components/MikrotikPanel";
 import IpLookup from "./components/IpLookup";
 import AppsBlock from "./components/AppsBlock";
 import ServiceBlock from "./components/ServiceBlock";
@@ -48,7 +49,9 @@ export default function App() {
   // Har oshganda xaritada samolyot uchadi (refresh yoki qidiruv bosilganda)
   const [flightId, setFlightId] = useState(0);
 
-  const [view, setView] = useState("home"); // home | apps | categories | channel | category | checker | profile
+  const [view, setView] = useState("home"); // home | apps | categories | channel | category | checker | mikrotik | profile
+  // /mikrotik yoki /mikrotik/faq
+  const [mikrotikTab, setMikrotikTab] = useState("setup");
   // /apps/<bo'lim> — null bo'lsa "Hammasi"
   const [appSection, setAppSection] = useState(null);
   const [selectedChannel, setSelectedChannel] = useState(null);
@@ -84,6 +87,16 @@ export default function App() {
     if (parts[0] === "checker") {
       setView("checker");
       setActiveTab("checker");
+      setSelectedChannel(null);
+      setSelectedCategory(null);
+      return;
+    }
+
+    // MikroTik sozlash ham kanallarga bog'liq emas
+    if (parts[0] === "mikrotik") {
+      setView("mikrotik");
+      setActiveTab("mikrotik");
+      setMikrotikTab(parts[1] === "faq" ? "faq" : "setup");
       setSelectedChannel(null);
       setSelectedCategory(null);
       return;
@@ -153,6 +166,20 @@ export default function App() {
     setActiveTab("categories");
   }, [location.pathname, channels]);
 
+  // Har sahifaga o'z sarlavhasi — Google sitelinks nomini shundan oladi
+  useEffect(() => {
+    const page = {
+      apps: t.apps,
+      categories: t.categories,
+      category: selectedCategory,
+      channel: selectedChannel?.Name,
+      checker: t.checker,
+      mikrotik: t.mikrotik,
+      profile: t.profile,
+    }[view];
+    document.title = page ? `${page} — KattaBaza` : "KattaBaza — Dasturlar Markazi";
+  }, [view, t, selectedCategory, selectedChannel]);
+
   const openHandler = (url) => url && window.open(url, "_blank");
 
   const copyText = async (value, key) => {
@@ -183,6 +210,12 @@ export default function App() {
       setView("checker");
       setActiveTab("checker");
       navigate("/checker");
+      return;
+    }
+    if (tab === "mikrotik") {
+      setView("mikrotik");
+      setActiveTab("mikrotik");
+      navigate("/mikrotik");
       return;
     }
     if (tab === "profile") {
@@ -316,7 +349,7 @@ export default function App() {
             setFlightId((n) => n + 1);
           }}
         />
-        {view !== "checker" && view !== "profile" && (
+        {view !== "checker" && view !== "mikrotik" && view !== "profile" && (
           <SearchBar value={searchQuery} onChange={setSearchQuery} placeholder={t.search} />
         )}
 
@@ -339,6 +372,14 @@ export default function App() {
         )}
 
         {view === "checker" && <CheckerPanel lang={lang} />}
+
+        {view === "mikrotik" && (
+          <MikrotikPanel
+            lang={lang}
+            tab={mikrotikTab}
+            onTab={(tab) => navigate(tab === "faq" ? "/mikrotik/faq" : "/mikrotik")}
+          />
+        )}
 
         {view === "profile" && <ProfileView t={t} />}
 

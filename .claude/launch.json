@@ -8,6 +8,12 @@
       "port": 5173
     },
     {
+      "name": "kattabaza-vite",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["node_modules/vite/bin/vite.js"],
+      "port": 5173
+    },
+    {
       "name": "kattabaza-local",
       "url": "http://127.0.0.1:8090",
       "port": 8090
