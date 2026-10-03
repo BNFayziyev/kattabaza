@@ -2,6 +2,9 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://kattabaza.uz/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>
   <url><loc>https://kattabaza.uz/apps</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
+  <url><loc>https://kattabaza.uz/time</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://kattabaza.uz/treyler</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://kattabaza.uz/med</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://kattabaza.uz/checker</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://kattabaza.uz/mikrotik</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://kattabaza.uz/mikrotik/faq</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>

@@ -111,6 +111,7 @@ export const translations = {
     live: "Live",
     comingSoon: "Coming soon",
     openService: "Open",
+    features: "Features",
     svc: {
       time: {
         name: "Time",
@@ -261,6 +262,7 @@ export const translations = {
     live: "Ishlamoqda",
     comingSoon: "Tez orada",
     openService: "Ochish",
+    features: "Imkoniyatlar",
     svc: {
       time: {
         name: "Time",
@@ -410,6 +412,7 @@ export const translations = {
     live: "Работает",
     comingSoon: "Скоро",
     openService: "Открыть",
+    features: "Возможности",
     svc: {
       time: {
         name: "Time",

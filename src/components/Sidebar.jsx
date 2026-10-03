@@ -209,17 +209,25 @@ function SidebarContent({
                   <Icon name="external" size={13} />
                 </a>
               ) : (
-                <div
+                // Hali ishga tushmagan servis — kattabaza.uz/<id> dagi tanishtiruv sahifasi
+                <a
                   key={s.id}
-                  aria-disabled="true"
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-sm font-medium text-muted/70 cursor-default"
+                  href={`/${s.id}`}
+                  onClick={(e) => {
+                    if (!plainClick(e)) return;
+                    e.preventDefault();
+                    onNavigate("service-" + s.id);
+                  }}
+                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    activeTab === "service-" + s.id ? "bg-primary-soft text-primary" : "text-muted/70 hover:text-text hover:bg-surface-hover"
+                  }`}
                 >
                   <Icon name={s.icon} className="opacity-70" />
                   <span className="truncate flex-1">{t.svc[s.id].name}</span>
                   <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-surface-hover border border-line">
                     {t.soon}
                   </span>
-                </div>
+                </a>
               )
             )}
           </div>

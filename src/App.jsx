@@ -23,6 +23,8 @@ import ServiceBlock from "./components/ServiceBlock";
 import AssistantPanel from "./components/AssistantPanel";
 import { LANGS } from "./lib/i18n";
 import { SERVICES } from "./lib/site";
+import { pageMeta } from "./lib/seo";
+import ServicePage from "./components/ServicePage";
 import { APP_SECTIONS, sectionOf } from "./lib/appCatalog";
 
 function initialTheme() {
@@ -49,7 +51,9 @@ export default function App() {
   // Har oshganda xaritada samolyot uchadi (refresh yoki qidiruv bosilganda)
   const [flightId, setFlightId] = useState(0);
 
-  const [view, setView] = useState("home"); // home | apps | categories | channel | category | checker | mikrotik | profile
+  const [view, setView] = useState("home"); // home | apps | categories | channel | category | checker | mikrotik | profile | service
+  // /time, /treyler, /med — servis haqida sahifa
+  const [serviceId, setServiceId] = useState(null);
   // /mikrotik yoki /mikrotik/faq
   const [mikrotikTab, setMikrotikTab] = useState("setup");
   // /apps/<bo'lim> — null bo'lsa "Hammasi"
@@ -97,6 +101,17 @@ export default function App() {
       setView("mikrotik");
       setActiveTab("mikrotik");
       setMikrotikTab(parts[1] === "faq" ? "faq" : "setup");
+      setSelectedChannel(null);
+      setSelectedCategory(null);
+      return;
+    }
+
+    // Servis sahifalari (/time, /treyler, /med ...) ham kanallarga bog'liq emas
+    const svc = parts.length === 1 && SERVICES.find((s) => s.id === parts[0]);
+    if (svc) {
+      setView("service");
+      setActiveTab("service-" + svc.id);
+      setServiceId(svc.id);
       setSelectedChannel(null);
       setSelectedCategory(null);
       return;
@@ -166,19 +181,14 @@ export default function App() {
     setActiveTab("categories");
   }, [location.pathname, channels]);
 
-  // Har sahifaga o'z sarlavhasi — Google sitelinks nomini shundan oladi
+  // Har sahifaga o'z sarlavhasi va tavsifi (lib/seo.js) — Google shulardan oladi
   useEffect(() => {
-    const page = {
-      apps: t.apps,
-      categories: t.categories,
-      category: selectedCategory,
-      channel: selectedChannel?.Name,
-      checker: t.checker,
-      mikrotik: t.mikrotik,
-      profile: t.profile,
-    }[view];
-    document.title = page ? `${page} — KattaBaza` : "KattaBaza — Dasturlar Markazi";
-  }, [view, t, selectedCategory, selectedChannel]);
+    const m = pageMeta(location.pathname);
+    const own = { category: selectedCategory, channel: selectedChannel?.Name }[view];
+    document.title = own ? `${own} — KattaBaza` : m.title;
+    document.querySelector('meta[name="description"]')?.setAttribute("content", m.desc);
+    document.querySelector('link[rel="canonical"]')?.setAttribute("href", m.url);
+  }, [location.pathname, view, selectedCategory, selectedChannel]);
 
   const openHandler = (url) => url && window.open(url, "_blank");
 
@@ -222,6 +232,10 @@ export default function App() {
       setView("profile");
       setActiveTab("profile");
       navigate("/profile");
+      return;
+    }
+    if (tab.startsWith("service-")) {
+      navigate("/" + tab.slice("service-".length));
       return;
     }
     setActiveTab(tab);
@@ -349,7 +363,7 @@ export default function App() {
             setFlightId((n) => n + 1);
           }}
         />
-        {view !== "checker" && view !== "mikrotik" && view !== "profile" && (
+        {view !== "checker" && view !== "mikrotik" && view !== "profile" && view !== "service" && (
           <SearchBar value={searchQuery} onChange={setSearchQuery} placeholder={t.search} />
         )}
 
@@ -366,7 +380,7 @@ export default function App() {
               onSelectCategory={(cat) => handleSelectCategory(cat, null)}
             />
             {homeServices.map((s) => (
-              <ServiceBlock key={s.id} t={t} service={s} theme={theme} />
+              <ServiceBlock key={s.id} t={t} service={s} theme={theme} onDetails={() => navigate("/" + s.id)} />
             ))}
           </div>
         )}
@@ -382,6 +396,10 @@ export default function App() {
         )}
 
         {view === "profile" && <ProfileView t={t} />}
+
+        {view === "service" && serviceId && (
+          <ServicePage t={t} service={SERVICES.find((s) => s.id === serviceId)} theme={theme} />
+        )}
 
         {view === "categories" && (
           <ChannelsCategoriesView

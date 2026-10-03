@@ -2,7 +2,7 @@ import { serviceUrl, slideUrl } from "../lib/site";
 import Carousel from "./Carousel";
 import Icon from "./Icon";
 
-export default function ServiceBlock({ t, service, theme }) {
+export default function ServiceBlock({ t, service, theme, onDetails, as: Heading = "h2" }) {
   const text = t.svc[service.id];
   const live = service.status === "live";
   // Rasm sayt mavzusiga mos: kunduzgida oq, tungida qora platforma ko'rinishi
@@ -18,7 +18,22 @@ export default function ServiceBlock({ t, service, theme }) {
           <Icon name={service.icon} size={18} />
         </span>
         <div className="min-w-0 flex-1">
-          <h2 className="text-sm font-bold text-text truncate">{text.name}</h2>
+          {onDetails ? (
+            // Haqiqiy havola: Google /time, /treyler sahifalarini shu orqali topadi
+            <a
+              href={`/${service.id}`}
+              onClick={(e) => {
+                if (e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                e.preventDefault();
+                onDetails();
+              }}
+              className="block text-sm font-bold text-text truncate hover:text-primary transition-colors"
+            >
+              {text.name}
+            </a>
+          ) : (
+            <Heading className="text-sm font-bold text-text truncate">{text.name}</Heading>
+          )}
           <div className="text-xs text-muted truncate">{service.domain}</div>
         </div>
         {live ? (

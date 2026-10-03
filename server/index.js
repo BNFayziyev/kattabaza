@@ -1,13 +1,14 @@
 // KattaBaza server: yig'ilgan saytni (dist/) beradi va /api so'rovlariga javob qaytaradi.
 // Tashqi bog'liqlik yo'q — faqat Node.js (24+).
 import { createReadStream } from "node:fs";
-import { stat } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import http from "node:http";
 import path from "node:path";
 import { config } from "./config.js";
 import { clientIp, lookup } from "./ip.js";
 import { checkPassword, getKeys, issueToken, verifyToken } from "./keys.js";
 import { getCatalog } from "./sheets.js";
+import { pageMeta } from "../src/lib/seo.js";
 
 // ---------- Yordamchilar ----------
 
@@ -173,7 +174,32 @@ async function handleStatic(req, res, url) {
   if (path.extname(url.pathname)) return send(res, 404, "Not found", { "Content-Type": "text/plain" });
   const index = await fileAt("/index.html");
   if (!index) return send(res, 503, "Sayt hali yig'ilmagan: npm run build", { "Content-Type": "text/plain; charset=utf-8" });
-  return stream(req, res, index, "no-cache");
+  return sendPage(req, res, index, url.pathname);
+}
+
+// index.html ga shu sahifaning sarlavhasi va tavsifi qo'yiladi — Google har bir
+// sahifani o'z nomi bilan ko'rsatadi (aks holda hammasida bosh sahifa tavsifi chiqardi)
+const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+
+async function sendPage(req, res, { full }, pathname) {
+  const m = pageMeta(pathname);
+  const html = (await readFile(full, "utf8"))
+    .replace(/<title>[^<]*<\/title>/, `<title>${esc(m.title)}</title>`)
+    .replace(/(<meta name="description" content=")[^"]*/, `$1${esc(m.desc)}`)
+    .replace(/(<link rel="canonical" href=")[^"]*/, `$1${m.url}`)
+    .replace(/(<meta property="og:title" content=")[^"]*/, `$1${esc(m.title)}`)
+    .replace(/(<meta property="og:description" content=")[^"]*/, `$1${esc(m.desc)}`)
+    .replace(/(<meta property="og:url" content=")[^"]*/, `$1${m.url}`)
+    .replace(/(<meta name="twitter:title" content=")[^"]*/, `$1${esc(m.title)}`)
+    .replace(/(<meta name="twitter:description" content=")[^"]*/, `$1${esc(m.desc)}`);
+  const body = Buffer.from(html);
+  res.writeHead(200, {
+    ...SECURITY_HEADERS,
+    "Content-Type": TYPES[".html"],
+    "Content-Length": body.length,
+    "Cache-Control": "no-cache",
+  });
+  res.end(req.method === "HEAD" ? undefined : body);
 }
 
 // ---------- Server ----------
