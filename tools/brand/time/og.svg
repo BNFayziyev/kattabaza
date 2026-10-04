@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <style>@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&amp;family=Inter:wght@500&amp;display=swap');</style>
+  <rect width="1200" height="630" fill="#0B0B0C"/>
+  <g transform="translate(40 175) scale(0.5)"><rect x='104' y='104' width='196' height='196' rx='30' fill='#F86501'/><g fill='none' stroke='#0B0B0C' stroke-width='14' stroke-linecap='round' stroke-linejoin='round'><path d='M150 172v-14a12 12 0 0 1 12-12h14M228 146h14a12 12 0 0 1 12 12v14M254 232v14a12 12 0 0 1-12 12h-14M176 258h-14a12 12 0 0 1-12-12v-14'/><path d='M184 182v10M220 182v10M202 186v26h-8M186 230q16 12 32 0'/></g><rect x='320' y='104' width='88' height='88' rx='16' fill='#F86501'/><rect x='320' y='212' width='88' height='88' rx='16' fill='#F86501'/><rect x='104' y='320' width='88' height='88' rx='16' fill='#F86501'/><rect x='212' y='320' width='88' height='88' rx='16' fill='#F86501'/><rect x='320' y='320' width='88' height='88' rx='16' fill='#FFFFFF'/></g>
+  <text x="280" y="330" font-family="'Baloo 2',sans-serif" font-weight="800" font-size="124" letter-spacing="-3"><tspan fill="#FFFFFF">Katta</tspan><tspan fill="#F86501">Baza</tspan><tspan fill="#FFFFFF" dx="24">Time</tspan></text>
+  <text x="286" y="400" fill="#9A9AA2" font-family="Inter,sans-serif" font-weight="500" font-size="38">FaceID davomat platformasi</text>
+</svg>
