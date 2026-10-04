@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <style>@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&amp;family=Inter:wght@500&amp;display=swap');</style>
+  <rect width="1200" height="630" fill="#0B0B0C"/>
+  <g transform="translate(50 180) scale(0.5)"><rect x='104' y='104' width='196' height='196' rx='30' fill='#F86501'/><g fill='none' stroke='#0B0B0C' stroke-width='13' stroke-linecap='round' stroke-linejoin='round'><rect x='138' y='156' width='112' height='66' rx='7'/><path d='M250 210h20'/><circle cx='174' cy='240' r='13'/><circle cx='222' cy='240' r='13'/></g><rect x='320' y='104' width='88' height='88' rx='16' fill='#F86501'/><rect x='320' y='212' width='88' height='88' rx='16' fill='#F86501'/><rect x='104' y='320' width='88' height='88' rx='16' fill='#F86501'/><rect x='212' y='320' width='88' height='88' rx='16' fill='#F86501'/><rect x='320' y='320' width='88' height='88' rx='16' fill='#FFFFFF'/></g>
+  <text x="280" y="325" font-family="'Baloo 2',sans-serif" font-weight="800" font-size="106" letter-spacing="-3"><tspan fill="#FFFFFF">Katta</tspan><tspan fill="#F86501">Baza</tspan><tspan fill="#FFFFFF" dx="22">Treyler</tspan></text>
+  <text x="286" y="392" fill="#9A9AA2" font-family="Inter,sans-serif" font-weight="500" font-size="34">Trailer Watch · treyler kuzatuvi</text>
+</svg>
