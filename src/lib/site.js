@@ -26,7 +26,11 @@ export const SERVICES = [
   { id: "time", domain: "time.kattabaza.uz", status: "live", icon: "clock", home: true, slides: ["time-1", "time-2", "time-3", "time-4"] },
   { id: "treyler", domain: "treyler.kattabaza.uz", status: "live", icon: "truck", home: true, slides: ["treyler-1", "treyler-2", "treyler-3", "treyler-4"] },
   { id: "camera", domain: "camera.kattabaza.uz", status: "soon", icon: "camera", home: false, slides: [] },
-  { id: "med", domain: "med.kattabaza.uz", status: "soon", icon: "pulse", home: true, slides: ["med-1", "med-2"] },
+  { id: "med", domain: "med.kattabaza.uz", status: "live", icon: "pulse", home: true, slides: ["med-1"] },
+  { id: "vizitka", domain: "vizitka.kattabaza.uz", status: "live", icon: "card", home: true, slides: ["vizitka-1"] },
+  { id: "bron", domain: "bron.kattabaza.uz", status: "live", icon: "scissors", home: true, slides: ["bron-1"] },
+  { id: "samsara", domain: "samsara.kattabaza.uz", status: "live", icon: "camera", home: true, slides: ["samsara-1"] },
+  { id: "bot", domain: "bot.kattabaza.uz", status: "live", icon: "chat", home: true, slides: ["bot-1"] },
 ];
 
 export const serviceUrl = (s) => `https://${s.domain}`;

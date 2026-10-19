@@ -54,6 +54,26 @@ const PATHS = {
     </>
   ),
   pulse: <path d="M3 12h4l2.5-6 5 12 2.5-6h4" />,
+  card: (
+    <>
+      <rect x="3" y="5.5" width="18" height="13" rx="2" />
+      <circle cx="8.5" cy="11" r="1.8" />
+      <path d="M5.8 16c.5-1.4 1.6-2 2.7-2s2.2.6 2.7 2M14 10h4M14 13.5h3" />
+    </>
+  ),
+  scissors: (
+    <>
+      <circle cx="6" cy="6.5" r="2.5" />
+      <circle cx="6" cy="17.5" r="2.5" />
+      <path d="M8 8 20 18M8 16 20 6" />
+    </>
+  ),
+  chat: (
+    <>
+      <path d="M4 5.5h16a1 1 0 0 1 1 1V16a1 1 0 0 1-1 1h-8l-4.5 3.5V17H4a1 1 0 0 1-1-1V6.5a1 1 0 0 1 1-1z" />
+      <path d="M8 10h8M8 13h5" />
+    </>
+  ),
   box: (
     <>
       <path d="M12 3 20 7.5v9L12 21l-8-4.5v-9z" />

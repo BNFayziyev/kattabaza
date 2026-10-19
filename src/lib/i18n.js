@@ -136,8 +136,28 @@ export const translations = {
       camera: { name: "Camera", desc: "Details will be announced later.", slides: [] },
       med: {
         name: "Med",
-        desc: "A new medical service from KattaBaza. We are building it right now.",
-        slides: ["med.kattabaza.uz — coming soon", "In development — stay tuned"],
+        desc: "AI presentations for medical students: type a topic and the AI builds a ready deck from a large medical library — export to PPTX or PDF.",
+        slides: ["Type a topic — the AI finds sources in the medical library and builds the presentation"],
+      },
+      vizitka: {
+        name: "Vizitka",
+        desc: "Digital business card in 2 minutes: profile link, QR code, NFC card, 24 design templates and printed card orders.",
+        slides: ["Profile link, QR code and 24 business card templates — sign in with Telegram"],
+      },
+      bron: {
+        name: "BronBar",
+        desc: "Online booking for barbershops: pick a free slot with your barber — no waiting, no phone calls. Reminders come through Telegram.",
+        slides: ["Barber's free slots at a glance, reminder before the visit, notifications in Telegram"],
+      },
+      samsara: {
+        name: "Samsara",
+        desc: "Samsara camera wall: road cameras of all trucks on one screen, map with route trail and Safety Inbox videos.",
+        slides: ["Road cameras of all trucks on one screen — sign in with Telegram or login"],
+      },
+      bot: {
+        name: "BotChat",
+        desc: "Manage all your Telegram bots in one place: read messages and reply as the bot. The number of bots is unlimited.",
+        slides: ["Connect bots by BotFather token and use them like a messenger"],
       },
     },
 
@@ -287,8 +307,28 @@ export const translations = {
       camera: { name: "Camera", desc: "Tafsilotlar keyinroq e’lon qilinadi.", slides: [] },
       med: {
         name: "Med",
-        desc: "KattaBaza’dan yangi tibbiy servis. Hozir ustida ishlayapmiz.",
-        slides: ["med.kattabaza.uz — tez orada", "Ishlab chiqilmoqda — kuzatib boring"],
+        desc: "Tibbiyot talabalari uchun AI prezentatsiyalar: mavzuni yozing — AI katta tibbiy bazadan manba topib, tayyor taqdimot yasaydi. PPTX va PDF.",
+        slides: ["Mavzuni yozing — AI tibbiy kutubxonadan manba topib, prezentatsiya tuzadi"],
+      },
+      vizitka: {
+        name: "Vizitka",
+        desc: "Raqamli vizitka 2 daqiqada: profil-havola, QR kod, NFC karta, 24 ta dizayn shablon va bosma vizitka buyurtmasi.",
+        slides: ["Profil-havola, QR kod va 24 ta vizitka shabloni — Telegram orqali kirish"],
+      },
+      bron: {
+        name: "BronBar",
+        desc: "Sartaroshxonaga onlayn bron: sartaroshning bo‘sh vaqtini tanlang — kutish va qo‘ng‘iroqlarsiz. Eslatmalar Telegram orqali keladi.",
+        slides: ["Sartaroshning bo‘sh vaqtlari bir qarashda, navbatdan oldin eslatma, xabarlar Telegramda"],
+      },
+      samsara: {
+        name: "Samsara",
+        desc: "Samsara kamera devori: barcha traklarning yo‘l kameralari bir ekranda, xaritada yo‘l izi va Safety Inbox videolari.",
+        slides: ["Barcha traklarning yo‘l kameralari bir ekranda — Telegram yoki login bilan kirish"],
+      },
+      bot: {
+        name: "BotChat",
+        desc: "Telegram botlaringizni bitta joyda boshqaring: xabarlarni o‘qing va bot nomidan javob bering. Botlar soni cheklanmagan.",
+        slides: ["Botlarni BotFather tokeni bilan ulang va messenjerdagidek ishlating"],
       },
     },
 
@@ -437,8 +477,28 @@ export const translations = {
       camera: { name: "Camera", desc: "Подробности будут объявлены позже.", slides: [] },
       med: {
         name: "Med",
-        desc: "Новый медицинский сервис от KattaBaza. Мы уже работаем над ним.",
-        slides: ["med.kattabaza.uz — скоро", "В разработке — следите за новостями"],
+        desc: "AI-презентации для студентов-медиков: введите тему — AI соберёт готовую презентацию из большой медицинской библиотеки. PPTX и PDF.",
+        slides: ["Введите тему — AI найдёт источники в медицинской библиотеке и соберёт презентацию"],
+      },
+      vizitka: {
+        name: "Vizitka",
+        desc: "Цифровая визитка за 2 минуты: ссылка-профиль, QR-код, NFC-карта, 24 шаблона и заказ печатных визиток.",
+        slides: ["Ссылка-профиль, QR-код и 24 шаблона визиток — вход через Telegram"],
+      },
+      bron: {
+        name: "BronBar",
+        desc: "Онлайн-запись в барбершоп: выберите свободное время мастера — без ожидания и звонков. Напоминания приходят в Telegram.",
+        slides: ["Свободное время мастера на виду, напоминание перед визитом, уведомления в Telegram"],
+      },
+      samsara: {
+        name: "Samsara",
+        desc: "Стена камер Samsara: дорожные камеры всех траков на одном экране, карта со следом маршрута и видео Safety Inbox.",
+        slides: ["Дорожные камеры всех траков на одном экране — вход через Telegram или логин"],
+      },
+      bot: {
+        name: "BotChat",
+        desc: "Управляйте всеми Telegram-ботами в одном месте: читайте сообщения и отвечайте от имени бота. Количество ботов не ограничено.",
+        slides: ["Подключайте ботов по токену BotFather и пользуйтесь как мессенджером"],
       },
     },
 

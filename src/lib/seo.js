@@ -7,7 +7,7 @@ export const SITE = "https://kattabaza.uz";
 export const PAGES = {
   "/": {
     title: "KattaBaza — Dasturlar Markazi",
-    desc: "KattaBaza — dasturlar, VPN va ilovalarni xavfsiz yuklab olish markazi. FaceID davomat, treyler kuzatuvi, xavfsizlik tekshiruvi va MikroTik sozlash — hammasi bir joyda.",
+    desc: "KattaBaza — dasturlar, VPN va ilovalarni xavfsiz yuklab olish markazi. FaceID davomat, treyler kuzatuvi, tibbiy AI prezentatsiya, raqamli vizitka, sartaroshga bron, xavfsizlik tekshiruvi va MikroTik sozlash — hammasi bir joyda.",
   },
   "/apps": {
     title: "Ilovalar katalogi — KattaBaza",
@@ -34,8 +34,24 @@ export const PAGES = {
     desc: "5 ta GPS provayderdagi barcha treylerlar bitta xaritada: uzoq turib qolganlari avtomatik aniqlanadi, Telegram'ga hisobot va ogohlantirishlar. treyler.kattabaza.uz",
   },
   "/med": {
-    title: "KattaBaza Med — tibbiy servis (tez orada)",
-    desc: "KattaBaza'ning yangi tibbiy servisi — med.kattabaza.uz. Hozir ishlab chiqilmoqda, tez orada ishga tushadi.",
+    title: "KattaBaza Med — tibbiyot talabalari uchun AI prezentatsiya",
+    desc: "Mavzuni yozing — AI tibbiy kutubxonadan manba topib, tayyor prezentatsiya (PPTX, PDF) yasaydi. Tibbiy kitoblar bazasi, jonli viktorina. med.kattabaza.uz",
+  },
+  "/vizitka": {
+    title: "Vizitka — raqamli vizitka, QR kod va NFC | KattaBaza",
+    desc: "Raqamli vizitka 2 daqiqada: profil-havola, QR kod, NFC karta, 24 ta dizayn shablon va bosma vizitka buyurtmasi. Telegram orqali kirish. vizitka.kattabaza.uz",
+  },
+  "/bron": {
+    title: "BronBar — sartaroshga onlayn bron | KattaBaza",
+    desc: "Sartaroshxona va barbershopga onlayn bron: bo'sh vaqtni tanlang, navbatdan oldin eslatma oling — kutish va qo'ng'iroqlarsiz. bron.kattabaza.uz",
+  },
+  "/samsara": {
+    title: "Samsara Wall — traklarning kamera devori | KattaBaza",
+    desc: "Barcha Samsara traklarining yo'l kameralari bir ekranda: xaritada yo'l izi, Safety Inbox videolari va Telegram xabarnomalari. samsara.kattabaza.uz",
+  },
+  "/bot": {
+    title: "BotChat — Telegram botlarini boshqarish | KattaBaza",
+    desc: "Telegram botlaringizni bitta joyda boshqaring: xabarlarni o'qing va bot nomidan javob bering. Botlar soni cheklanmagan. bot.kattabaza.uz",
   },
   "/categories": {
     title: "Kategoriyalar — KattaBaza",
