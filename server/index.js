@@ -6,7 +6,7 @@ import http from "node:http";
 import path from "node:path";
 import { config } from "./config.js";
 import { clientIp, lookup } from "./ip.js";
-import { checkPassword, getKeys, issueToken, verifyToken } from "./keys.js";
+import { checkAppsPassword, checkPassword, getKeys, issueToken, verifyToken } from "./keys.js";
 import { getCatalog } from "./sheets.js";
 import { pageMeta } from "../src/lib/seo.js";
 
@@ -103,6 +103,14 @@ async function handleApi(req, res, url) {
     if (!checkPassword(password)) return json(res, 401, { error: "wrong_password" });
     const session = issueToken();
     return json(res, 200, { ...session, keys: await getKeys() });
+  }
+
+  if (route === "POST /api/apps/unlock") {
+    const wait = unlockLimit(who);
+    if (wait) return json(res, 429, { error: "rate_limited", retryAfter: wait }, { "Retry-After": String(wait) });
+    const { password } = await readJson(req);
+    if (!checkAppsPassword(password)) return json(res, 401, { error: "wrong_password" });
+    return json(res, 200, { ok: true, expiresAt: Date.now() + config.keysSessionMin * 60_000 });
   }
 
   if (route === "GET /api/keys") {

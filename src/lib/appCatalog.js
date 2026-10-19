@@ -849,3 +849,10 @@ export const EXTRA_APPS = RAW.map((app) => {
     versions,
   };
 });
+
+// Parol so'raladigan havolalar: katalogdagi barcha ilovalarning versiya havolalari
+let protectedUrls;
+export const isProtectedUrl = (url) => {
+  protectedUrls ||= new Set(EXTRA_APPS.flatMap((a) => [a.file_url, ...a.versions.map((v) => v.url)]));
+  return protectedUrls.has(url);
+};

@@ -8,6 +8,7 @@ import { useIpInfo } from "./hooks/useIpInfo";
 import Sidebar from "./components/Sidebar";
 import Footer from "./components/Footer";
 import KeysModal from "./components/KeysModal";
+import AppsPasswordModal from "./components/AppsPasswordModal";
 import ConnectionCard from "./components/ConnectionCard";
 import LocationMap from "./components/LocationMap";
 import SearchBar from "./components/SearchBar";
@@ -25,7 +26,7 @@ import { LANGS } from "./lib/i18n";
 import { SERVICES } from "./lib/site";
 import { pageMeta } from "./lib/seo";
 import ServicePage from "./components/ServicePage";
-import { APP_SECTIONS, sectionOf } from "./lib/appCatalog";
+import { APP_SECTIONS, sectionOf, isProtectedUrl } from "./lib/appCatalog";
 
 function initialTheme() {
   if (typeof window === "undefined") return "light";
@@ -190,7 +191,14 @@ export default function App() {
     document.querySelector('link[rel="canonical"]')?.setAttribute("href", m.url);
   }, [location.pathname, view, selectedCategory, selectedChannel]);
 
-  const openHandler = (url) => url && window.open(url, "_blank");
+  // Katalogdagi (jadvaldan tashqari) ilovalar parol bilan yuklanadi; parol serverda tekshiriladi
+  const [appsUnlockedUntil, setAppsUnlockedUntil] = useState(0);
+  const [pendingUrl, setPendingUrl] = useState("");
+  const openHandler = (url) => {
+    if (!url) return;
+    if (isProtectedUrl(url) && Date.now() > appsUnlockedUntil) setPendingUrl(url);
+    else window.open(url, "_blank");
+  };
 
   const copyText = async (value, key) => {
     if (!value) return;
@@ -439,6 +447,16 @@ export default function App() {
 
       <Footer t={t} />
 
+      <AppsPasswordModal
+        t={t}
+        open={!!pendingUrl}
+        onClose={() => setPendingUrl("")}
+        onUnlocked={(expiresAt) => {
+          setAppsUnlockedUntil(expiresAt);
+          window.open(pendingUrl, "_blank");
+          setPendingUrl("");
+        }}
+      />
       <KeysModal
         open={keysOpen}
         onClose={() => setKeysOpen(false)}

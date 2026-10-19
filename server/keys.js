@@ -27,6 +27,20 @@ function acceptedPasswords(now = Date.now()) {
   return [-1, 0, 1].map((d) => timeCode(new Date(now + d * 60_000)));
 }
 
+// Ilovalarni yuklash paroli: Toshkent vaqti SSSDD (masalan 18:26 → 1826) + 101 → 1927.
+// Daqiqa almashganda ham o'tishi uchun ±1 daqiqa qabul qilinadi.
+function appsCode(date) {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: config.keysTimezone,
+    hour12: false,
+    hour: "2-digit",
+    minute: "2-digit",
+  }).formatToParts(date);
+  const hour = Number(parts.find((p) => p.type === "hour")?.value || 0) % 24;
+  const minute = Number(parts.find((p) => p.type === "minute")?.value || 0);
+  return String((hour * 100 + minute + 101) % 10000).padStart(4, "0");
+}
+
 const digest = (s) => crypto.createHash("sha256").update(String(s)).digest();
 
 export function checkPassword(entered) {
@@ -118,4 +132,9 @@ export async function getKeys() {
     })
     .filter(Boolean)
     .reverse();
+}
+
+export function checkAppsPassword(entered, now = Date.now()) {
+  const got = digest(String(entered || "").trim());
+  return [-1, 0, 1].some((d) => crypto.timingSafeEqual(got, digest(appsCode(new Date(now + d * 60_000)))));
 }
