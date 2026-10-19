@@ -28,7 +28,6 @@ export const SERVICES = [
   { id: "camera", domain: "camera.kattabaza.uz", status: "soon", icon: "camera", home: false, slides: [] },
   { id: "med", domain: "med.kattabaza.uz", status: "live", icon: "pulse", home: true, slides: ["med-1"] },
   { id: "vizitka", domain: "vizitka.kattabaza.uz", status: "live", icon: "card", home: true, slides: ["vizitka-1"] },
-  { id: "bron", domain: "bron.kattabaza.uz", status: "live", icon: "scissors", home: true, slides: ["bron-1"] },
   { id: "samsara", domain: "samsara.kattabaza.uz", status: "live", icon: "camera", home: true, slides: ["samsara-1"] },
   { id: "bot", domain: "bot.kattabaza.uz", status: "live", icon: "chat", home: true, slides: ["bot-1"] },
 ];

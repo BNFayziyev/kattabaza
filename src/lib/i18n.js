@@ -144,11 +144,6 @@ export const translations = {
         desc: "Digital business card in 2 minutes: profile link, QR code, NFC card, 24 design templates and printed card orders.",
         slides: ["Profile link, QR code and 24 business card templates — sign in with Telegram"],
       },
-      bron: {
-        name: "BronBar",
-        desc: "Online booking for barbershops: pick a free slot with your barber — no waiting, no phone calls. Reminders come through Telegram.",
-        slides: ["Barber's free slots at a glance, reminder before the visit, notifications in Telegram"],
-      },
       samsara: {
         name: "Samsara",
         desc: "Samsara camera wall: road cameras of all trucks on one screen, map with route trail and Safety Inbox videos.",
@@ -315,11 +310,6 @@ export const translations = {
         desc: "Raqamli vizitka 2 daqiqada: profil-havola, QR kod, NFC karta, 24 ta dizayn shablon va bosma vizitka buyurtmasi.",
         slides: ["Profil-havola, QR kod va 24 ta vizitka shabloni — Telegram orqali kirish"],
       },
-      bron: {
-        name: "BronBar",
-        desc: "Sartaroshxonaga onlayn bron: sartaroshning bo‘sh vaqtini tanlang — kutish va qo‘ng‘iroqlarsiz. Eslatmalar Telegram orqali keladi.",
-        slides: ["Sartaroshning bo‘sh vaqtlari bir qarashda, navbatdan oldin eslatma, xabarlar Telegramda"],
-      },
       samsara: {
         name: "Samsara",
         desc: "Samsara kamera devori: barcha traklarning yo‘l kameralari bir ekranda, xaritada yo‘l izi va Safety Inbox videolari.",
@@ -484,11 +474,6 @@ export const translations = {
         name: "Vizitka",
         desc: "Цифровая визитка за 2 минуты: ссылка-профиль, QR-код, NFC-карта, 24 шаблона и заказ печатных визиток.",
         slides: ["Ссылка-профиль, QR-код и 24 шаблона визиток — вход через Telegram"],
-      },
-      bron: {
-        name: "BronBar",
-        desc: "Онлайн-запись в барбершоп: выберите свободное время мастера — без ожидания и звонков. Напоминания приходят в Telegram.",
-        slides: ["Свободное время мастера на виду, напоминание перед визитом, уведомления в Telegram"],
       },
       samsara: {
         name: "Samsara",

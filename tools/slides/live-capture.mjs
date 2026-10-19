@@ -7,7 +7,7 @@ import { chromium } from "playwright-core";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const OUT = path.join(ROOT, "public", "slides");
-const SITES = { med: "https://med.kattabaza.uz", vizitka: "https://vizitka.kattabaza.uz", bron: "https://bron.kattabaza.uz", samsara: "https://samsara.kattabaza.uz", bot: "https://bot.kattabaza.uz" };
+const SITES = { med: "https://med.kattabaza.uz", vizitka: "https://vizitka.kattabaza.uz", samsara: "https://samsara.kattabaza.uz", bot: "https://bot.kattabaza.uz" };
 const CHROME = [
   process.env.CHROME_PATH,
   "C:/Program Files/Google/Chrome/Application/chrome.exe",
