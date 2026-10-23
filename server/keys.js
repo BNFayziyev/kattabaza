@@ -135,6 +135,10 @@ export async function getKeys() {
 }
 
 export function checkAppsPassword(entered, now = Date.now()) {
+  if (config.appsPassword) return digestEq(entered, config.appsPassword);
   const got = digest(String(entered || "").trim());
   return [-1, 0, 1].some((d) => crypto.timingSafeEqual(got, digest(appsCode(new Date(now + d * 60_000)))));
 }
+
+const digestEq = (a, b) =>
+  crypto.timingSafeEqual(digest(String(a || "").trim()), digest(String(b)));
