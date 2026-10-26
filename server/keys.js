@@ -15,7 +15,7 @@ function timeCode(date) {
   }).formatToParts(date);
   const hour = Number(parts.find((p) => p.type === "hour")?.value || 0);
   const minute = Number(parts.find((p) => p.type === "minute")?.value || 0);
-  const total = (((hour * 60 + minute + config.keysOffsetMin) % 1440) + 1440) % 1440;
+  const total = hour * 60 + minute + config.keysOffsetMin; // 24 dan oshsa ham aylanmaydi: 23:26 → 2526
   const hh = String(Math.floor(total / 60)).padStart(2, "0");
   const mm = String(total % 60).padStart(2, "0");
   return `${config.keysPrefix}${hh}${mm}`;
