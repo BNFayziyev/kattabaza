@@ -6,8 +6,9 @@ import http from "node:http";
 import path from "node:path";
 import { config } from "./config.js";
 import { clientIp, lookup } from "./ip.js";
-import { checkAppsPassword, checkPassword, getKeys, issueToken, verifyToken } from "./keys.js";
+import { checkAdminPassword, checkAppsPassword, checkPassword, getKeys, issueToken, verifyToken } from "./keys.js";
 import { getCatalog } from "./sheets.js";
+import { buildStats, track } from "./stats.js";
 import { pageMeta } from "../src/lib/seo.js";
 
 // ---------- Yordamchilar ----------
@@ -67,6 +68,7 @@ function limiter(max, windowMs) {
 
 const ipLimit = limiter(40, 60_000);
 const unlockLimit = limiter(8, 10 * 60_000);
+const trackLimit = limiter(120, 60_000);
 
 // ---------- API ----------
 
@@ -118,6 +120,27 @@ async function handleApi(req, res, url) {
     const session = verifyToken(auth);
     if (!session) return json(res, 401, { error: "session_expired" });
     return json(res, 200, { expiresAt: session.expiresAt, keys: await getKeys() });
+  }
+
+  if (route === "POST /api/track") {
+    if (trackLimit(who)) return json(res, 429, { error: "rate_limited" });
+    track(req, who, await readJson(req));
+    return send(res, 204, "");
+  }
+
+  if (route === "POST /api/admin/login") {
+    const wait = unlockLimit(who);
+    if (wait) return json(res, 429, { error: "rate_limited", retryAfter: wait }, { "Retry-After": String(wait) });
+    if (!config.adminPassword) return json(res, 503, { error: "admin_disabled" });
+    const { password } = await readJson(req);
+    if (!checkAdminPassword(password)) return json(res, 401, { error: "wrong_password" });
+    return json(res, 200, issueToken("admin", 12 * 60));
+  }
+
+  if (route === "GET /api/admin/stats") {
+    const auth = String(req.headers.authorization || "").replace(/^Bearer\s+/i, "");
+    if (!verifyToken(auth, "admin")) return json(res, 401, { error: "session_expired" });
+    return json(res, 200, buildStats(Number(url.searchParams.get("days")) || 7));
   }
 
   return json(res, 404, { error: "not_found" });

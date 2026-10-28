@@ -22,6 +22,7 @@ import IpLookup from "./components/IpLookup";
 import AppsBlock from "./components/AppsBlock";
 import ServiceBlock from "./components/ServiceBlock";
 import AssistantPanel from "./components/AssistantPanel";
+import AdminPanel from "./components/AdminPanel";
 import { LANGS } from "./lib/i18n";
 import { SERVICES } from "./lib/site";
 import { pageMeta } from "./lib/seo";
@@ -92,6 +93,14 @@ export default function App() {
     if (parts[0] === "checker") {
       setView("checker");
       setActiveTab("checker");
+      setSelectedChannel(null);
+      setSelectedCategory(null);
+      return;
+    }
+
+    if (parts[0] === "admin") {
+      setView("admin");
+      setActiveTab("admin");
       setSelectedChannel(null);
       setSelectedCategory(null);
       return;
@@ -181,6 +190,25 @@ export default function App() {
     setView("categories");
     setActiveTab("categories");
   }, [location.pathname, channels]);
+
+  // Tashrif statistikasi: har bir sahifa ochilishi serverga yuboriladi (admin sahifasi hisobga olinmaydi)
+  useEffect(() => {
+    if (location.pathname.startsWith("/admin")) return;
+    let sid = "";
+    try {
+      sid = window.localStorage.getItem("kb-sid") || "";
+      if (!sid) {
+        sid = Math.random().toString(36).slice(2) + Date.now().toString(36);
+        window.localStorage.setItem("kb-sid", sid);
+      }
+    } catch {}
+    fetch("/api/track", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sid, path: location.pathname, ref: document.referrer }),
+      keepalive: true,
+    }).catch(() => {});
+  }, [location.pathname]);
 
   // Har sahifaga o'z sarlavhasi va tavsifi (lib/seo.js) — Google shulardan oladi
   useEffect(() => {
@@ -371,7 +399,9 @@ export default function App() {
             setFlightId((n) => n + 1);
           }}
         />
-        {view !== "checker" && view !== "mikrotik" && view !== "profile" && view !== "service" && (
+        {view === "admin" && <AdminPanel />}
+
+        {view !== "checker" && view !== "mikrotik" && view !== "profile" && view !== "service" && view !== "admin" && (
           <SearchBar value={searchQuery} onChange={setSearchQuery} placeholder={t.search} />
         )}
 

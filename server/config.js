@@ -35,6 +35,8 @@ export const config = {
   keysPassword: env.KEYS_PASSWORD || "",
   // APPS_PASSWORD berilsa — ilovalarni yuklash uchun doimiy parol; bo'sh bo'lsa — Toshkent vaqti HHMM+101
   appsPassword: env.APPS_PASSWORD || "",
+  // ADMIN_PASSWORD berilmasa — /admin o'chiq
+  adminPassword: env.ADMIN_PASSWORD || "",
   keysPrefix: env.KEYS_PASSWORD_PREFIX ?? "Kitob",
   keysOffsetMin: Number(env.KEYS_PASSWORD_OFFSET_MIN ?? 71),
   keysTimezone: env.KEYS_TIMEZONE || "Asia/Tashkent",

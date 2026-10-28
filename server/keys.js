@@ -53,21 +53,21 @@ export function checkPassword(entered) {
 const sign = (payload) =>
   crypto.createHmac("sha256", config.secret).update(payload).digest("base64url");
 
-export function issueToken() {
-  const expiresAt = Date.now() + config.keysSessionMin * 60_000;
-  const payload = Buffer.from(JSON.stringify({ exp: expiresAt })).toString("base64url");
+export function issueToken(scope = "keys", minutes = config.keysSessionMin) {
+  const expiresAt = Date.now() + minutes * 60_000;
+  const payload = Buffer.from(JSON.stringify({ exp: expiresAt, scope })).toString("base64url");
   return { token: `${payload}.${sign(payload)}`, expiresAt };
 }
 
-export function verifyToken(token) {
+export function verifyToken(token, scope = "keys") {
   const [payload, mac] = String(token || "").split(".");
   if (!payload || !mac) return null;
   const expected = sign(payload);
   if (mac.length !== expected.length) return null;
   if (!crypto.timingSafeEqual(Buffer.from(mac), Buffer.from(expected))) return null;
   try {
-    const { exp } = JSON.parse(Buffer.from(payload, "base64url").toString());
-    return exp > Date.now() ? { expiresAt: exp } : null;
+    const { exp, scope: got = "keys" } = JSON.parse(Buffer.from(payload, "base64url").toString());
+    return exp > Date.now() && got === scope ? { expiresAt: exp } : null;
   } catch {
     return null;
   }
@@ -139,6 +139,9 @@ export function checkAppsPassword(entered, now = Date.now()) {
   const got = digest(String(entered || "").trim());
   return [-1, 0, 1].some((d) => crypto.timingSafeEqual(got, digest(appsCode(new Date(now + d * 60_000)))));
 }
+
+export const checkAdminPassword = (entered) =>
+  !!config.adminPassword && digestEq(entered, config.adminPassword);
 
 const digestEq = (a, b) =>
   crypto.timingSafeEqual(digest(String(a || "").trim()), digest(String(b)));
