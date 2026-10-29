@@ -8,7 +8,8 @@ import { config } from "./config.js";
 import { clientIp, lookup } from "./ip.js";
 import { checkAdminPassword, checkAppsPassword, checkPassword, getKeys, issueToken, verifyToken } from "./keys.js";
 import { getCatalog } from "./sheets.js";
-import { buildStats, track } from "./stats.js";
+import { buildStats, exportCsv, track, trackClick } from "./stats.js";
+import { getSite, publicSite, saveSite, siteReady } from "./site.js";
 import { pageMeta } from "../src/lib/seo.js";
 
 // ---------- Yordamchilar ----------
@@ -72,6 +73,9 @@ const trackLimit = limiter(120, 60_000);
 
 // ---------- API ----------
 
+const adminOk = (req) =>
+  !!verifyToken(String(req.headers.authorization || "").replace(/^Bearer\s+/i, ""), "admin");
+
 async function handleApi(req, res, url) {
   const route = `${req.method} ${url.pathname}`;
   const who = clientIp(req);
@@ -128,6 +132,37 @@ async function handleApi(req, res, url) {
     return send(res, 204, "");
   }
 
+  if (route === "POST /api/track/click") {
+    if (trackLimit(who)) return json(res, 429, { error: "rate_limited" });
+    trackClick(req, who, await readJson(req));
+    return send(res, 204, "");
+  }
+
+  if (route === "GET /api/site") {
+    await siteReady();
+    return json(res, 200, publicSite());
+  }
+
+  if (route === "GET /api/admin/site") {
+    if (!adminOk(req)) return json(res, 401, { error: "session_expired" });
+    await siteReady();
+    return json(res, 200, { site: getSite(), me: who });
+  }
+
+  if (route === "PUT /api/admin/site") {
+    if (!adminOk(req)) return json(res, 401, { error: "session_expired" });
+    await siteReady();
+    return json(res, 200, { site: await saveSite(await readJson(req, 512 * 1024)), me: who });
+  }
+
+  if (route === "GET /api/admin/export") {
+    if (!adminOk(req)) return json(res, 401, { error: "session_expired" });
+    return send(res, 200, exportCsv(), {
+      "Content-Type": "text/csv; charset=utf-8",
+      "Content-Disposition": "attachment; filename=visits.csv",
+    });
+  }
+
   if (route === "POST /api/admin/login") {
     const wait = unlockLimit(who);
     if (wait) return json(res, 429, { error: "rate_limited", retryAfter: wait }, { "Retry-After": String(wait) });
@@ -138,8 +173,7 @@ async function handleApi(req, res, url) {
   }
 
   if (route === "GET /api/admin/stats") {
-    const auth = String(req.headers.authorization || "").replace(/^Bearer\s+/i, "");
-    if (!verifyToken(auth, "admin")) return json(res, 401, { error: "session_expired" });
+    if (!adminOk(req)) return json(res, 401, { error: "session_expired" });
     return json(res, 200, buildStats(Number(url.searchParams.get("days")) || 7));
   }
 

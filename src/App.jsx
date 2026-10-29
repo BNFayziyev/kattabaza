@@ -78,7 +78,7 @@ export default function App() {
     window.localStorage.setItem("kb-lang", lang);
   }, [lang]);
 
-  const { materials, channels, loading } = useCatalogData();
+  const { materials, channels, loading, site } = useCatalogData();
   const ipInfo = useIpInfo();
 
   // URL -> STATE sync
@@ -222,10 +222,35 @@ export default function App() {
   // Katalogdagi (jadvaldan tashqari) ilovalar parol bilan yuklanadi; parol serverda tekshiriladi
   const [appsUnlockedUntil, setAppsUnlockedUntil] = useState(0);
   const [pendingUrl, setPendingUrl] = useState("");
+  // havola -> ilova (yuklashlar statistikasi uchun)
+  const urlOwner = useMemo(() => {
+    const map = new Map();
+    for (const m of materials) {
+      for (const u of [m.file_url, m.post_link, ...(m.versions || []).map((v) => v.url)]) if (u) map.set(u, m);
+    }
+    return map;
+  }, [materials]);
+  const recordOpen = (url) => {
+    const app = urlOwner.get(url);
+    let sid = "";
+    try {
+      sid = window.localStorage.getItem("kb-sid") || "";
+    } catch {}
+    fetch("/api/track/click", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sid, url, id: app?.id || "", title: app?.title || "" }),
+      keepalive: true,
+    }).catch(() => {});
+  };
+  const openUrl = (url) => {
+    recordOpen(url);
+    window.open(url, "_blank");
+  };
   const openHandler = (url) => {
     if (!url) return;
     if (isProtectedUrl(url) && Date.now() > appsUnlockedUntil) setPendingUrl(url);
-    else window.open(url, "_blank");
+    else openUrl(url);
   };
 
   const copyText = async (value, key) => {
@@ -349,6 +374,17 @@ export default function App() {
     label: ipInfo.city || ipInfo.region,
   };
 
+  if (site.maintenance && view !== "admin" && !location.pathname.startsWith("/admin")) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-6 text-center text-text">
+        <div>
+          <div className="text-3xl font-extrabold mb-2">KattaBaza</div>
+          <p className="text-sm text-muted max-w-md">{site.maintenance}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col text-text transition-colors lg:pl-64 xl:pr-80">
       <LocationMap
@@ -379,7 +415,12 @@ export default function App() {
       />
 
       <main className="relative z-10 flex-1 w-full max-w-6xl mx-auto px-4 md:px-6 py-6 flex flex-col gap-5">
-        <ConnectionCard
+        {site.banner && view !== "admin" && (
+          <div className="rounded-lg border border-primary/50 bg-primary-soft text-primary px-4 py-2.5 text-sm font-medium">
+            {site.banner}
+          </div>
+        )}
+        {view !== "admin" && <ConnectionCard
           t={t}
           ipInfo={ipInfo}
           copiedIp={copiedIp}
@@ -389,8 +430,8 @@ export default function App() {
             setFlightId((n) => n + 1);
             ipInfo.refresh();
           }}
-        />
-        <IpLookup
+        />}
+        {view !== "admin" && <IpLookup
           t={t}
           onLocate={(target) => {
             // Xato bo'lganda (joy topilmadi) samolyot bekorga uchmasin
@@ -398,7 +439,7 @@ export default function App() {
             setLookupFocus(target);
             setFlightId((n) => n + 1);
           }}
-        />
+        />}
         {view === "admin" && <AdminPanel />}
 
         {view !== "checker" && view !== "mikrotik" && view !== "profile" && view !== "service" && view !== "admin" && (
@@ -483,7 +524,7 @@ export default function App() {
         onClose={() => setPendingUrl("")}
         onUnlocked={(expiresAt) => {
           setAppsUnlockedUntil(expiresAt);
-          window.open(pendingUrl, "_blank");
+          openUrl(pendingUrl);
           setPendingUrl("");
         }}
       />

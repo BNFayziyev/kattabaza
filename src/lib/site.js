@@ -32,7 +32,18 @@ export const SERVICES = [
   { id: "bot", domain: "bot.kattabaza.uz", status: "live", icon: "chat", home: true, slides: ["bot-1"] },
 ];
 
-export const serviceUrl = (s) => `https://${s.domain}`;
+// Admin paneldan: servisni yashirish, "tez orada"ga o'tkazish, bosh sahifadan olib tashlash.
+// SERVICES joyida o'zgartiriladi — komponentlar keyingi renderda yangisini ko'radi.
+export const SERVICES_ALL = SERVICES.map((s) => ({ ...s }));
+export function applyServiceConfig(cfg = {}) {
+  SERVICES.splice(
+    0,
+    SERVICES.length,
+    ...SERVICES_ALL.filter((s) => !cfg[s.id]?.hidden).map((s) => ({ ...s, ...cfg[s.id], hidden: undefined }))
+  );
+}
+
+export const serviceUrl =(s) => `https://${s.domain}`;
 
 export const slideUrl = (id, theme) => `/slides/${id}-${theme === "dark" ? "dark" : "light"}.jpg`;
 

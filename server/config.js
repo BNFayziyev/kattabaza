@@ -22,7 +22,7 @@ export const config = {
   // cloudflared shu kompyuterda ishlaydi, shuning uchun tashqariga ochish shart emas
   host: env.HOST || "127.0.0.1",
   distDir: path.join(ROOT, "dist"),
-  dataDir: path.join(ROOT, "data"),
+  dataDir: env.DATA_DIR || path.join(ROOT, "data"),
 
   sheetId: env.SHEET_ID || "",
   materialsTab: env.MATERIALS_TAB || "Materials",

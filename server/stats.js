@@ -3,14 +3,27 @@
 import { appendFile, mkdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { config } from "./config.js";
+import { getSite } from "./site.js";
 
 const FILE = path.join(config.dataDir, "visits.jsonl");
 const MAX_EVENTS = 300_000;
 const ONLINE_MS = 5 * 60_000;
 const TZ = "Asia/Tashkent";
 
+const CLICKS_FILE = path.join(config.dataDir, "clicks.jsonl");
+
 let events = [];
+let clicks = [];
 const ready = (async () => {
+  try {
+    for (const line of (await readFile(CLICKS_FILE, "utf8")).split("\n")) {
+      if (!line) continue;
+      try {
+        clicks.push(JSON.parse(line));
+      } catch {}
+    }
+    clicks = clicks.slice(-MAX_EVENTS);
+  } catch {}
   try {
     for (const line of (await readFile(FILE, "utf8")).split("\n")) {
       if (!line) continue;
@@ -55,7 +68,7 @@ function refHost(ref) {
 export function track(req, ip, body) {
   const ua = String(req.headers["user-agent"] || "");
   const p = String(body.path || "").slice(0, 200);
-  if (!p.startsWith("/") || p.startsWith("/admin") || BOT_RE.test(ua)) return;
+  if (!p.startsWith("/") || p.startsWith("/admin") || BOT_RE.test(ua) || getSite().ignoreIps.includes(ip)) return;
   const ev = {
     t: Date.now(),
     sid: String(body.sid || "").slice(0, 40),
@@ -71,6 +84,34 @@ export function track(req, ip, body) {
     .then(() => mkdir(config.dataDir, { recursive: true }))
     .then(() => appendFile(FILE, JSON.stringify(ev) + "\n"))
     .catch((err) => console.error("[stats]", err.message));
+}
+
+// Yuklab olish / ochish bosilishlari (ilova kartalaridan)
+export function trackClick(req, ip, body) {
+  const ua = String(req.headers["user-agent"] || "");
+  const url = String(body.url || "").slice(0, 500);
+  if (!url || BOT_RE.test(ua) || getSite().ignoreIps.includes(ip)) return;
+  const ev = {
+    t: Date.now(),
+    sid: String(body.sid || "").slice(0, 40),
+    ip,
+    cc: String(req.headers["cf-ipcountry"] || "").toUpperCase().slice(0, 2),
+    id: String(body.id || "").slice(0, 80),
+    title: String(body.title || "").slice(0, 120),
+    url,
+  };
+  clicks.push(ev);
+  if (clicks.length > MAX_EVENTS) clicks = clicks.slice(-MAX_EVENTS);
+  ready
+    .then(() => mkdir(config.dataDir, { recursive: true }))
+    .then(() => appendFile(CLICKS_FILE, JSON.stringify(ev) + "\n"))
+    .catch((err) => console.error("[stats]", err.message));
+}
+
+export function exportCsv() {
+  const q = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  const rows = events.map((e) => [new Date(e.t).toISOString(), e.ip, e.cc, e.path, e.ref, e.device, e.browser, e.os].map(q).join(","));
+  return ["time,ip,country,path,referrer,device,browser,os", ...rows].join("\n");
 }
 
 const dayFmt = new Intl.DateTimeFormat("en-CA", { timeZone: TZ });
@@ -99,8 +140,30 @@ export function buildStats(days) {
   const last = new Map();
   for (const e of events.slice(-5000)) last.set(e.sid || e.ip, e);
 
+  const from = now - days * 86_400_000;
+  const dl = clicks.filter((c) => c.t >= from);
+  const dlDay = new Map([...byDay.keys()].map((d) => [d, 0]));
+  for (const c of dl) if (dlDay.has(day(c.t))) dlDay.set(day(c.t), dlDay.get(day(c.t)) + 1);
+  const perApp = new Map();
+  for (const c of clicks) {
+    const key = c.id || c.url;
+    const a = perApp.get(key) || { id: c.id, title: c.title || c.url, all: 0, period: 0, last: 0 };
+    a.all += 1;
+    if (c.t >= from) a.period += 1;
+    a.last = Math.max(a.last, c.t);
+    perApp.set(key, a);
+  }
+
   return {
     days,
+    downloads: {
+      total: dl.length,
+      today: dlDay.get(day(now)) || 0,
+      allTime: clicks.length,
+      series: [...dlDay].map(([date, count]) => ({ date, count })),
+      apps: [...perApp.values()].sort((a, b) => b.period - a.period || b.all - a.all).slice(0, 500),
+      recent: clicks.slice(-30).reverse().map((c) => ({ t: c.t, title: c.title || c.url, ip: c.ip, cc: c.cc, url: c.url })),
+    },
     totals: {
       views: list.length,
       visitors: uniq(list),

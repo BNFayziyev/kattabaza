@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
-import { EXTRA_APPS } from "../lib/appCatalog";
+import { EXTRA_APPS, setLockedUrls } from "../lib/appCatalog";
+import { applyServiceConfig } from "../lib/site";
 
 /**
  * Catalog data source.
@@ -61,6 +62,7 @@ export function useCatalogData() {
   const [channels, setChannels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [source, setSource] = useState(null);
+  const [site, setSite] = useState({ banner: "", maintenance: "" });
 
   useEffect(() => {
     let alive = true;
@@ -90,9 +92,51 @@ export function useCatalogData() {
         console.error("[KattaBaza] catalog load failed:", err);
       }
 
+      // Admin sozlamalari: yashirilgan/o'zgartirilgan va qo'shilgan ilovalar, servislar, e'lon
+      let cfg = {};
+      try {
+        const r = await fetch("/api/site");
+        if (r.ok) cfg = await r.json();
+      } catch {}
+      applyServiceConfig(cfg.services);
+
       if (!alive) return;
-      // Bizning ilovalar doim birinchi, qo'shimcha katalog — ulardan keyin
-      setMaterials([...result.materials, ...EXTRA_APPS]);
+      const overrides = cfg.overrides || {};
+      const custom = (cfg.customApps || []).map((a) => ({
+        id: a.id,
+        title: a.title,
+        description: a.description,
+        categories: a.categories?.length ? a.categories : ["windows"],
+        tags: [],
+        gallery_urls: [],
+        file_url: a.file_url,
+        file_type: a.file_type || "WEB",
+        size_mb: a.size_mb,
+        version: a.version,
+        platform: "",
+        author: "",
+        preview_url: a.preview_url,
+        post_link: "",
+        channel_ID: "",
+        created_at: "",
+        section: a.section,
+        locked: a.locked,
+      }));
+      setLockedUrls(custom.filter((a) => a.locked).map((a) => a.file_url));
+      const merged = [...result.materials, ...EXTRA_APPS, ...custom]
+        .filter((m) => !overrides[m.id]?.hidden)
+        .map((m) => {
+          const o = overrides[m.id];
+          if (!o) return m;
+          const { hidden, ...rest } = o;
+          const next = { ...m, ...rest };
+          // Havola o'zgargan bo'lsa — versiyalar ro'yxati ham shunga ko'rsatsin
+          if (rest.file_url && m.versions) next.versions = [{ ...m.versions[0], url: rest.file_url }, ...m.versions.slice(1)];
+          if (rest.description) next.descriptions = undefined;
+          return next;
+        });
+      setSite({ banner: cfg.banner || "", maintenance: cfg.maintenance || "" });
+      setMaterials(merged);
       setChannels(result.channels);
       setSource(used);
       setLoading(false);
@@ -108,6 +152,7 @@ export function useCatalogData() {
     channels,
     loading,
     source,
+    site,
     // Keys are never loaded here — KeysPanel fetches them via unlock_keys().
     dbRows: [],
   };

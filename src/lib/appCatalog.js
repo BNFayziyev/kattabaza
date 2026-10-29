@@ -852,7 +852,12 @@ export const EXTRA_APPS = RAW.map((app) => {
 
 // Parol so'raladigan havolalar: katalogdagi barcha ilovalarning versiya havolalari
 let protectedUrls;
+const lockedExtra = new Set(); // admin "parol bilan" deb belgilagan ilovalar havolalari
 export const isProtectedUrl = (url) => {
   protectedUrls ||= new Set(EXTRA_APPS.flatMap((a) => [a.file_url, ...a.versions.map((v) => v.url)]));
-  return protectedUrls.has(url);
+  return protectedUrls.has(url) || lockedExtra.has(url);
+};
+export const setLockedUrls = (urls) => {
+  lockedExtra.clear();
+  urls.forEach((u) => lockedExtra.add(u));
 };
